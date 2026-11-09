@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uniforce: what we know so far</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  /* BTS palette */
+  --magenta:#CA1C68; --magenta-m:#EA5F84; --magenta-l:#F4ADB9; --magenta-x:#FDF0F4;
+  --green:#1D7279; --green-m:#0DB4AB; --green-l:#B0DCD9; --green-x:#EDF7F6;
+  --purple:#4C3480; --purple-m:#826DAA; --purple-l:#B6ABCF; --purple-x:#F2EFF7;
+  --orange:#E63F50; --orange-m:#EA6B69; --orange-x:#FDF0EF;
+  --blue:#1C4C87; --blue-m:#6CBEE5; --blue-l:#C2E2F5; --blue-x:#EDF3FA;
+  --charcoal:#24282B; --grey-m:#A2A5A8; --grey-l:#EAEEF1; --grey-x:#F7F8F9;
+  /* semantic */
+  --bg:#ffffff; --panel:#ffffff; --surface:var(--grey-x); --ink:var(--charcoal); --muted:#596066; --line:var(--grey-l); --soft:var(--grey-x);
+  --pink:var(--magenta); --amber:var(--orange); --accent:var(--magenta);
+  --band-pink:var(--magenta-x); --band-grey:var(--grey-x);
+  --tag-bg:var(--blue-x); --tag-ink:var(--charcoal);
+  --t-purpose:#CA1C68; --t-direction:#1C4C87; --t-action:#24282B;
+  --s-cro:#1D7279; --s-chro:#4C3480; --s-case:#E63F50; --s-fin:#1C4C87;
+  --cro-x:var(--green-x); --chro-x:var(--purple-x);
+  --font:'Outfit','Mark OT','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --font-d:var(--font); --font-b:var(--font);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#1b1e20; --panel:#24282B; --surface:#2b3034; --ink:#ffffff; --muted:#C9CCD0; --line:#3a4046; --soft:#2b3034;
+    --pink:var(--magenta-m); --amber:var(--orange-m); --accent:var(--magenta-m); --blue:var(--blue-m);
+    --band-pink:#2a2024; --band-grey:#202427;
+    --tag-bg:rgba(108,190,229,.16); --tag-ink:var(--blue-l);
+    --t-action:#4a5258;
+    --s-cro:#0DB4AB; --s-chro:#B6ABCF; --s-case:#EA6B69; --s-fin:#6CBEE5;
+    --cro-x:rgba(13,180,171,.14); --chro-x:rgba(182,171,207,.14);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#1b1e20; --panel:#24282B; --surface:#2b3034; --ink:#ffffff; --muted:#C9CCD0; --line:#3a4046; --soft:#2b3034;
+  --pink:var(--magenta-m); --amber:var(--orange-m); --accent:var(--magenta-m); --blue:var(--blue-m);
+  --band-pink:#2a2024; --band-grey:#202427;
+  --tag-bg:rgba(108,190,229,.16); --tag-ink:var(--blue-l);
+  --t-action:#4a5258;
+  --s-cro:#0DB4AB; --s-chro:#B6ABCF; --s-case:#EA6B69; --s-fin:#6CBEE5;
+  --cro-x:rgba(13,180,171,.14); --chro-x:rgba(182,171,207,.14);
+}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-weight:400;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--panel);z-index:30}
+*{box-sizing:border-box}
+h1,h2,h3{font-family:var(--font);font-weight:500;line-height:1.1;margin:0;letter-spacing:-0.015em}
+h1,h2{font-weight:700;letter-spacing:-0.02em}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--charcoal);padding-top:12px}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:1 1 0;min-width:132px;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:#fff;font-weight:500;font-size:17px;line-height:1.25;padding:20px 14px;transition:background .2s,color .2s}
+.tabs a:hover{background:rgba(255,255,255,.08)}
+.tabs a[aria-current="true"]{background:#fff;color:var(--charcoal);border-radius:24px 24px 0 0}
+.tabs a[aria-current="true"]:hover{background:#fff}
+.tabs a:focus-visible{outline-color:#fff;outline-offset:-4px}
+
+/* pill buttons with the circled arrow */
+.btn-primary{display:inline-flex;align-items:center;gap:16px;background:var(--magenta);color:#fff;text-decoration:none;font-weight:500;font-size:18px;padding:8px 8px 8px 28px;border-radius:999px;transition:background .2s}
+.btn-primary:hover{background:#b01759}
+.btn-primary .circ{width:42px;height:42px;border-radius:50%;background:#fff;color:var(--charcoal);display:grid;place-items:center;transition:transform .25s}
+.btn-primary:hover .circ{transform:translateX(3px)}
+.btn-primary .circ svg{width:18px;height:18px}
+.btn-primary.small{font-size:15px;padding:5px 5px 5px 20px;gap:12px}
+.btn-primary.small .circ{width:32px;height:32px}
+.btn-primary.small .circ svg{width:15px;height:15px}
+.btn-ghost{display:inline-flex;align-items:center;font-weight:500;font-size:18px;text-decoration:none;color:inherit;border:1px solid currentColor;border-radius:999px;padding:14px 28px;transition:background .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn{appearance:none;border:1px solid var(--grey-m);background:transparent;color:var(--ink);font:500 15px var(--font);padding:8px 18px;border-radius:999px;cursor:pointer;transition:background .2s}
+.btn:hover{background:var(--surface)}
+.btn[aria-pressed="true"]{background:var(--magenta);border-color:var(--magenta);color:#fff}
+
+/* hero */
+.hero{background:var(--charcoal);color:#fff;position:relative;overflow:hidden;--ink:#fff;--muted:#C9CCD0;--line:#4a5056;--accent:var(--magenta-m)}
+.hero .wrap{position:relative;padding-top:88px;padding-bottom:84px}
+.hero h1{font-size:clamp(36px,6.2vw,72px);font-weight:700;max-width:15em;line-height:1.12}
+.hl-mark{background:var(--magenta);color:#fff;padding:0 .12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hero .lead{font-weight:300;font-size:clamp(18px,2.1vw,24px);line-height:1.5;max-width:34em;margin-top:28px;color:#fff}
+.hero .actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px;align-items:center}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:44px;font-size:15px;color:#C9CCD0}
+.flow .step{border:1px solid #6b7278;border-radius:999px;padding:6px 16px;color:#fff;font-weight:500}
+.flow .arrow{color:var(--magenta-m)}
+.hero .small-note{font-size:15px;color:#C9CCD0;max-width:42em;margin-top:14px}
+.doodle{position:absolute;right:max(24px,5vw);bottom:48px;width:min(30vw,340px);height:auto;overflow:visible;pointer-events:none}
+.doodle path{fill:none;stroke:var(--magenta-m);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.doodle .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.6s .4s ease-out forwards}
+.doodle .head{animation-delay:1.9s;animation-duration:.35s}
+.doodle .sparks path{stroke:#fff;stroke-width:4;opacity:0;animation:pop .4s 2.1s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{to{opacity:1}}
+@media (max-width:980px){.doodle{display:none}}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .doodle .draw{animation:none;stroke-dashoffset:0}
+  .doodle .sparks path{animation:none;opacity:1}
+  .btn-primary,.btn-primary .circ,.cell{transition:none}
+}
+
+/* sections and bands */
+section{padding:88px 0 24px}
+.band-pink{background:var(--band-pink);padding-bottom:88px;margin-top:64px}
+.band-grey{background:var(--band-grey);padding-bottom:88px;margin-top:64px}
+.band-dark{background:var(--charcoal);color:#fff;padding-bottom:96px;margin-top:64px;--ink:#fff;--muted:#C9CCD0;--line:#4a5056;--accent:var(--magenta-m);--panel:#2f3438;--surface:#2f3438;--tag-bg:rgba(108,190,229,.18);--tag-ink:var(--blue-l)}
+.sec-head{max-width:760px;margin-bottom:40px}
+.tag{display:inline-block;background:var(--tag-bg);color:var(--tag-ink);border-radius:999px;padding:4px 16px;font-size:15px;font-weight:500;margin-bottom:20px}
+.sec-head h2{font-size:clamp(30px,4.6vw,52px);margin-bottom:16px}
+.sec-head p{color:var(--muted);font-weight:300;font-size:20px;line-height:1.5}
+.band-dark .sec-head p{color:#E1E3E5}
+
+/* cards and charts */
+.card{background:var(--surface);border-radius:24px;padding:28px}
+.band-pink .card,.band-grey .card{background:var(--panel)}
+.grid2{display:grid;grid-template-columns:3fr 2fr;gap:20px}
+.grid2e{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media (max-width:860px){.grid2,.grid2e,.grid3{grid-template-columns:1fr}}
+.card h3{font-size:22px;margin-bottom:6px}
+.card .cap{color:var(--muted);font-size:15px;margin-bottom:12px;font-weight:300}
+#chart-flow svg,#chart-net svg,#chart-index svg,.mini svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--font);fill:var(--muted);font-size:12px}
+svg .lab-strong{fill:var(--ink);font-weight:500}
+.legend{display:flex;gap:18px;font-size:14px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.mini{padding:22px}
+.mini .val{font-size:38px;font-weight:500;line-height:1;letter-spacing:-0.02em}
+.mini .t{font-size:15px;color:var(--muted);margin-bottom:8px}
+.mini .note{font-size:15px;margin-top:8px}
+.mini .zoom{font-size:12px;color:var(--muted);margin-top:2px}
+.chip{display:inline-block;font-size:13px;font-weight:500;padding:3px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.chip.c-values,.chip.c-vision{background:var(--t-purpose);border-color:transparent;color:#fff}
+.chip.c-mindset,.chip.c-strategy{background:var(--t-direction);border-color:transparent;color:#fff}
+.chip.c-org,.chip.c-init{background:var(--t-action);border-color:transparent;color:#fff}
+.chip.c-outcome{background:transparent;border:1px dashed var(--muted);color:var(--muted)}
+.src{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--ink)}
+.src::before{content:"";width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.src.cro::before{background:var(--s-cro)}.src.chro::before{background:var(--s-chro)}.src.case::before{background:var(--s-case)}.src.fin::before{background:var(--s-fin)}
+.slider-row{display:flex;align-items:center;gap:16px;margin:12px 0 18px}
+input[type=range]{flex:1;accent-color:var(--magenta);min-width:0}
+.big{font-size:40px;font-weight:500;line-height:1.05;letter-spacing:-0.02em}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.kv .k{font-size:14px;color:var(--muted)}
+.read{display:grid;gap:0;margin-top:14px}
+.read .item{display:grid;grid-template-columns:220px 1fr;gap:20px;padding:18px 0;border-top:1px solid var(--line)}
+.read .item b{font-weight:500;font-size:18px}
+.read .item span{font-weight:300}
+@media (max-width:700px){.read .item{grid-template-columns:1fr;gap:4px}}
+
+/* voices */
+.voice{border-radius:24px;background:var(--surface);padding:32px}
+.voice.cro{--vc:var(--s-cro)}.voice.chro{--vc:var(--s-chro)}
+.voice .who{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+.avatar{width:60px;height:60px;border-radius:50%;background:var(--vc);color:var(--bg);font-weight:500;display:grid;place-items:center;font-size:20px;flex:none}
+.dark-avatar-fix{color:#24282B}
+.voice h3{font-size:26px}
+.voice .role{color:var(--muted);font-size:15px}
+.voice blockquote{margin:18px 0;padding:0 0 0 18px;border-left:4px solid var(--vc);font-style:italic;font-size:20px;font-weight:300;line-height:1.4}
+.voice dl{margin:0;display:grid;gap:14px}
+.voice dt{font-size:14px;font-weight:500;color:var(--muted);margin-bottom:2px}
+.voice dd{margin:0;font-weight:300}
+
+/* connections */
+.legend-row{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:8px;font-size:15px}
+.group-title{font-size:26px;margin:44px 0 6px}
+.group-sub{color:var(--muted);font-size:16px;margin-bottom:16px;font-weight:300}
+details.theme{background:var(--panel);border-radius:24px;margin-bottom:14px;overflow:hidden}
+details.theme summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr 1.1fr 1fr;align-items:stretch;transition:background .2s}
+details.theme summary::-webkit-details-marker{display:none}
+details.theme summary:hover .core{background:var(--surface)}
+.side{padding:20px 22px;font-size:15px;font-weight:300}
+.side .tag2{display:block;font-size:13px;font-weight:500;margin-bottom:4px}
+.side.cro{background:var(--cro-x)}.side.cro .tag2{color:var(--s-cro)}
+.side.chro{background:var(--chro-x)}.side.chro .tag2{color:var(--s-chro)}
+.side.none{background:var(--surface);color:var(--muted);font-style:italic}
+.core{padding:20px 22px;text-align:center;background:var(--panel);display:flex;flex-direction:column;justify-content:center;gap:6px;transition:background .2s}
+.core b{font-size:20px;font-weight:500;line-height:1.15}
+.core .more{font-size:13px;color:var(--muted)}
+.tbody{padding:20px 28px 24px;border-top:1px solid var(--line)}
+.tbody .link{font-weight:500;font-size:18px;margin-bottom:14px}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:12px 0;border-top:1px solid var(--line);font-size:15px}
+.ev .id{font-weight:500;color:var(--muted)}
+.ev .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
+@media (max-width:780px){details.theme summary{grid-template-columns:1fr}}
+.gaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.gap{border:2px dashed var(--magenta-l);border-radius:24px;padding:20px 22px;font-size:15px;font-weight:300;background:transparent}
+.gap b{display:block;font-weight:500;font-size:18px;margin-bottom:4px}
+
+/* pyramid */
+.pyr-wrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:920px){.pyr-wrap{grid-template-columns:1fr}}
+.pyr-heads{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;font-weight:500;font-size:16px;color:var(--muted);margin-bottom:30px}
+.tier{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 auto 10px;position:relative}
+.tier.t1{width:58%}.tier.t2{width:79%}.tier.t3{width:100%}
+.tier .tl{position:absolute;left:0;top:-6px;transform:translate(0,-100%);font-size:14px;font-weight:500;color:var(--muted)}
+.cell{appearance:none;border:0;border-radius:22px;color:#fff;text-align:left;padding:16px 18px;cursor:pointer;font-family:var(--font);min-height:116px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;position:relative;transition:transform .2s}
+.cell:hover{transform:translateY(-2px)}
+.cell.p{background:var(--t-purpose)}.cell.d{background:var(--t-direction)}.cell.a{background:var(--t-action)}
+.cell .nm{font-weight:500;font-size:17px;line-height:1.2}
+.cell .ct{font-size:14px;font-weight:300}
+.cell .bar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.28)}
+.cell .bar i{display:block;height:100%}
+.cell.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--ink)}
+.cell.hl{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--orange)}
+.cell.dim{opacity:.35}
+.outcome-strip{margin-top:18px;width:100%}
+.outcome-strip .cell{background:transparent;color:var(--ink);border:2px dashed var(--grey-m);min-height:0;flex-direction:row;align-items:center;width:100%;border-radius:22px}
+.mis-btns{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 12px}
+.panel-title{font-size:26px;margin-bottom:10px}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;padding:4px 14px;border-radius:999px;margin-bottom:14px;background:var(--panel);border:1px solid var(--line)}
+.status::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--grey-m)}
+.status.bad::before{background:var(--magenta)}.status.mid::before{background:var(--orange)}
+.mis-card{margin-top:14px;border-radius:24px;padding:22px 24px;background:var(--magenta-x);color:var(--charcoal);font-size:16px}
+.mis-card h3{font-size:21px;margin-bottom:8px}
+.mis-card p{font-weight:300}
+.mis-card .tri{margin:12px 0;font-size:15px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-weight:500}
+.mis-card .src{color:var(--charcoal)}
+.mis-card p.next{color:#3d4247;font-weight:400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .mis-card{background:#3a2430;color:#fff}:root:not([data-theme="light"]) .mis-card .src{color:#fff}:root:not([data-theme="light"]) .mis-card p.next{color:#E1E3E5}}
+:root[data-theme="dark"] .mis-card{background:#3a2430;color:#fff}
+:root[data-theme="dark"] .mis-card .src{color:#fff}
+:root[data-theme="dark"] .mis-card p.next{color:#E1E3E5}
+
+/* ledger */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+select{font:400 15px var(--font);background:var(--panel);color:var(--ink);border:1px solid var(--grey-m);border-radius:999px;padding:8px 14px;max-width:100%}
+.row{display:grid;grid-template-columns:52px 140px 1.6fr 220px 1.2fr;gap:18px;padding:18px 4px;border-top:1px solid var(--line);font-size:15px;align-items:start;font-weight:300}
+.row b{font-weight:500}
+.row.head{font-weight:500;color:var(--muted);font-size:14px;border-top:0}
+.row .sowhat{color:var(--muted)}
+@media (max-width:920px){
+  .row{grid-template-columns:1fr;gap:8px;background:var(--panel);border-radius:20px;padding:18px;margin-bottom:12px;border-top:0}
+  .row.head{display:none}
+}
+.ask-list{display:grid;gap:14px}
+.ask{display:flex;gap:18px;align-items:flex-start;padding:20px 24px;background:var(--panel);border-radius:24px;font-size:18px;font-weight:300}
+.ask .chips{display:flex;gap:8px;flex:none;flex-wrap:wrap;max-width:230px}
+.band-dark .chip{background:transparent;border-color:#6b7278;color:#fff}
+.band-dark .chip.c-values,.band-dark .chip.c-vision{background:var(--t-purpose);border-color:transparent}
+.band-dark .chip.c-mindset,.band-dark .chip.c-strategy{background:var(--t-direction);border-color:transparent}
+.band-dark .chip.c-org,.band-dark .chip.c-init{background:#4a5258;border-color:transparent}
+.band-dark .chip.c-outcome{border:1px dashed #A2A5A8;color:#C9CCD0}
+@media (max-width:640px){.ask{flex-direction:column}}
+/* provenance labels */
+.prov{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:13px;color:var(--muted);font-weight:300}
+.pv{display:inline-block;font-size:12px;font-weight:500;line-height:1.5;padding:1px 10px;border-radius:999px;border:1px solid var(--grey-m);color:var(--ink);background:transparent;white-space:nowrap}
+.pv.case{border-color:var(--ink)}
+.pv.calc{border-style:dotted;border-width:2px}
+.pv.est{border-style:dashed;border-width:2px;border-color:var(--orange)}
+.pv.note{border-color:transparent;background:var(--tag-bg);color:var(--tag-ink)}
+.pv.read{border-color:var(--magenta-l);background:var(--magenta-x);color:var(--charcoal)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pv.read{background:#3a2430;color:#fff;border-color:transparent}}
+:root[data-theme="dark"] .pv.read{background:#3a2430;color:#fff;border-color:transparent}
+.hero .pv{color:#fff;border-color:#8a9097}
+.hero .pv.case{border-color:#fff}
+.hero .pv.est{border-color:var(--orange-m)}
+.hero .pv.note{background:rgba(108,190,229,.22);border-color:transparent;color:#fff}
+.hero .pv.read{background:rgba(234,95,132,.28);border-color:transparent;color:#fff}
+.key{margin-top:26px;max-width:46em;font-size:15px;color:#C9CCD0}
+.key b{display:block;color:#fff;font-weight:500;font-size:16px;margin-bottom:10px}
+.key div{display:flex;gap:12px;align-items:center;margin-bottom:8px;font-weight:300}
+.key .pv{flex:none;min-width:116px;text-align:center}
+.mini .prov{margin-top:10px}
+.mis-card .prov{margin:2px 0 10px;color:#3d4247}
+/* view switch and summary view */
+body[data-view="summary"] .only-analysis{display:none!important}
+body[data-view="analysis"] .only-summary{display:none!important}
+body[data-view="summary"] .only-qa,body[data-view="analysis"] .only-qa{display:none!important}
+body[data-view="qa"] .only-analysis,body[data-view="qa"] .only-summary{display:none!important}
+.viewswitch{display:inline-flex;border:1px solid #8a9097;border-radius:999px;padding:4px;gap:4px}
+.viewswitch button{appearance:none;border:0;background:transparent;color:#fff;font:500 16px var(--font);padding:10px 22px;border-radius:999px;cursor:pointer;transition:background .2s}
+.viewswitch button:hover{background:rgba(255,255,255,.12)}
+.viewswitch button[aria-pressed="true"]{background:#fff;color:var(--charcoal)}
+.askmap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.askcard{background:var(--surface);border-radius:24px;padding:26px}
+.askcard b{font-weight:500;color:var(--muted);font-size:14px}
+.askcard h3{font-size:22px;margin:6px 0 8px}
+.askcard p{font-weight:300}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.mis-big{border-top:6px solid var(--t-direction)}
+.mis-big.two{border-top-color:var(--t-action)}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.pstep{background:var(--surface);border-radius:24px;padding:22px}
+.pstep h3{font-size:18px;margin-bottom:6px}
+.pstep p{font-size:15px;font-weight:300}
+.stepn{width:36px;height:36px;border-radius:50%;background:var(--magenta);color:#fff;display:grid;place-items:center;font-weight:500;margin-bottom:12px}
+.cl{margin:10px 0 0;padding-left:20px;font-weight:300}
+.cl li{margin-bottom:8px}
+.cl b{font-weight:500}
+.pend{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line);font-weight:300}
+.pend .pv{flex:none}
+.prov .pv.read:first-child{flex:none}
+@media (max-width:1000px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){.askmap,.twocol{grid-template-columns:1fr}}
+@media (max-width:560px){.steps{grid-template-columns:1fr}}
+/* summary additions */
+.bridge{margin-top:20px;padding:4px 0 4px 18px;border-left:4px solid var(--magenta);font-size:19px;font-weight:500}
+.bridge span{font-weight:300;display:block;color:var(--muted);font-size:15px;margin-top:2px}
+.quote{margin:0;background:var(--panel);border-radius:24px;padding:28px;border-top:6px solid var(--t-direction)}
+.quote.two{border-top-color:var(--t-action)}
+.quote blockquote{margin:0 0 12px;font-size:23px;font-weight:300;line-height:1.35;font-style:italic}
+.quote figcaption{font-weight:500;color:var(--muted);font-size:15px}
+.quote .prov{margin-top:14px}
+/* Q&A prep */
+.qa{background:var(--surface);border-radius:24px;margin-bottom:14px;overflow:hidden}
+.band-grey .qa,.band-pink .qa{background:var(--panel)}
+.qa summary{list-style:none;cursor:pointer;padding:20px 26px;font-weight:500;font-size:19px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"+";font-size:28px;font-weight:300;color:var(--muted);flex:none}
+.qa[open] summary::after{content:"\2013"}
+.qa summary:focus-visible{outline-offset:-4px}
+.qa .qb{padding:0 26px 24px}
+.qa .ans{font-size:20px;font-weight:500;margin-bottom:6px}
+.qa h4{font-size:14px;font-weight:500;color:var(--muted);margin:16px 0 4px;letter-spacing:0}
+.qa .cl li{margin-bottom:10px}
+.qa .pv{margin-left:4px}
+footer{padding:36px 0 56px;color:var(--muted);font-size:14px;font-weight:300}
+footer .wrap{display:flex;gap:24px;justify-content:space-between;flex-wrap:wrap;align-items:flex-end}
+footer .src-note{max-width:640px}
+footer .copy{text-align:right;margin-left:auto}
+</style>
+</head>
+<body data-view="summary">
+<nav class="nav only-analysis" aria-label="Sections"><div class="tabs">
+  <a href="#top" data-view-link="summary" aria-current="false">← Summary</a>
+  <a href="#business" aria-current="false">The business</a><a href="#voices" aria-current="false">Two voices</a><a href="#connections" aria-current="false">Connections and gaps</a><a href="#pyramid" aria-current="false">The pyramid</a><a href="#ledger" aria-current="false">Evidence ledger</a><a href="#validate" aria-current="false">To validate</a>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1>Uniforce wins about 232,000 customers a year and <span class="hl-mark">loses about 240,000.</span></h1>
+    <p class="lead">The financials, two executive interviews and the BTS Culture/Strategy Pyramid in one place, so we understand what was discovered before we plan the conversation with Jamie.</p>
+    <div class="actions">
+      <div class="viewswitch" role="group" aria-label="Choose a view"><button type="button" data-view="summary" aria-pressed="true">Summary</button><button type="button" data-view="analysis" aria-pressed="false">Full analysis</button><button type="button" data-view="qa" aria-pressed="false">Q&amp;A prep</button></div>
+      <a class="btn-primary only-analysis" href="#business"><span>Start with the numbers</span><span class="circ" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="btn-ghost only-analysis" href="#ledger">See the evidence</a>
+    </div>
+    <div class="flow" aria-label="How this page works"><span class="step">Evidence</span><span class="arrow" aria-hidden="true">→</span><span class="step">Pyramid cell</span><span class="arrow" aria-hidden="true">→</span><span class="step">So what</span></div>
+    <p class="small-note only-analysis">Every data point and interview point is tagged to a pyramid cell. The tags and “so what” notes are my first read. Retag anything in the <a href="#ledger">evidence ledger</a> and the pyramid updates.</p>
+    <div class="key" role="group" aria-label="How every figure and note on this page is labeled"><b>Every figure and note on this page is labeled</b><div><span class="pv case">From Uniforce</span>straight from Uniforce’s reported figures, with no changes</div><div><span class="pv note">Interview note</span>from the Phase 2 interview notes</div><div><span class="pv calc">Calculated</span>my arithmetic on Uniforce’s figures</div><div><span class="pv est">Estimate</span>calculated with an assumption I had to make</div><div><span class="pv read">My analysis</span>my interpretation of what the evidence means, open for discussion</div></div>
+    <svg class="doodle" viewBox="0 0 220 160" aria-hidden="true" focusable="false">
+      <path class="draw" pathLength="1" d="M8 28 C38 8 52 64 88 46 S142 84 176 118"/>
+      <path class="draw head" pathLength="1" d="M150 106 L180 120 L152 130"/>
+      <g class="sparks"><path d="M200 34 l14 -10"/><path d="M204 56 l18 -2"/><path d="M192 14 l4 -14"/></g>
+    </svg>
+  </div>
+</header>
+
+<main class="only-analysis">
+<section id="business"><div class="wrap">
+  <div class="sec-head"><span class="tag">Financials</span><h2>A leaky bucket: customers leave faster than they arrive</h2><p>Figures from the Financial Overview are labeled “From Uniforce”. Anything I worked out is labeled “Calculated”, or “Estimate” when it rests on an assumption. The same labels run through the whole page.</p></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Customers won and lost each year</h3>
+      <div class="cap">Bars start at zero. The gap is small each year, but it is negative every year.</div>
+      <div class="legend"><span><i style="background:var(--s-cro)"></i>New customers</span><span><i style="background:var(--pink)"></i>Churned customers</span></div>
+      <div id="chart-flow"></div>
+      <div class="prov"><span class="pv case">From Uniforce</span><span>Financial Overview, revenue breakdown</span></div>
+    </div>
+    <div class="card">
+      <h3>Net change in customers</h3>
+      <div class="cap">New minus churned. This year is the worst of the three.</div>
+      <div id="chart-net"></div>
+      <div class="prov"><span class="pv calc">Calculated</span><span>New customers minus churned customers</span></div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:20px" id="minis"></div>
+
+  <div class="grid2e" style="margin-top:20px">
+    <div class="card">
+      <h3>The market grew. Uniforce’s new business barely did.</h3>
+      <div class="cap">New customers, indexed to Year −2 = 100.</div>
+      <div id="chart-index"></div>
+      <div class="prov"><span class="pv calc">Calculated</span><span>Indexed from Uniforce’s new-customer figures, market and Uniforce</span></div>
+      <p style="font-size:16px;margin-top:10px;font-weight:300">Market new customers up 16%; Uniforce’s up 3%. The share of new customers fell from 9.0% to 8.0%.</p>
+    </div>
+    <div class="card">
+      <h3>What is one point of retention worth?</h3>
+      <div class="cap">Estimate: points of retention × this year’s opening base (443,890) × $250 a subscription. It assumes each saved customer pays for a full year.</div>
+      <div class="slider-row"><label for="ret" style="font-weight:500;white-space:nowrap">Retention gain</label><input id="ret" type="range" min="0" max="10" step="0.5" value="3"><b id="ret-out" style="min-width:64px;text-align:right;font-weight:500">3 pts</b></div>
+      <div class="kv">
+        <div><div class="big" id="ret-cust">—</div><div class="k">customers kept each year</div></div>
+        <div><div class="big" id="ret-rev">—</div><div class="k">added annual revenue</div></div>
+      </div>
+      <p style="font-size:15px;margin-top:16px;font-weight:300" id="ret-compare"></p>
+      <div class="prov"><span class="pv est">Estimate</span><span>Assumes each saved customer pays $250 for a full year. Not a forecast.</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>Reading across the numbers</h3>
+    <div class="read">
+      <div class="item"><b>Not a funding problem</b><span>Operating margin is still about 49%, debt-to-equity is 0.2, and expenses are small next to gross profit. Uniforce can afford to invest. The constraint is how people work and what they’re measured on.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv read">My analysis</span></span></span></div>
+      <div class="item"><b>Spending more to win less</b><span>Sales and marketing spend rose about 9% this year (roughly +$0.45M) while the share of new customers fell. Nothing in the statements shows money going toward keeping customers.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span><span class="pv read">My analysis</span></span></span></div>
+      <div class="item"><b>Innovation looks flat</b><span>R&amp;D has held near $3.0M, about 2.7–2.8% of revenue, and price has been $250 for three years. That fits the CRO’s “slow innovation” point.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span><span class="pv read">My analysis</span></span></span></div>
+      <div class="item"><b>“Declining sales” needs a closer look</b><span>New customers still grew 3% in two years, but churn grew faster. The bigger lever looks like retention and share, not just closing deals. Worth confirming how the CRO defines it.<span class="prov"><span class="pv calc">Calculated</span><span class="pv read">My analysis</span></span></span></div>
+      <div class="item"><b>Two data checks</b><span>Free cash flow ($113.5M) is more than double operating profit ($53.7M), which is unusual and worth verifying. Days sales outstanding rose from 50 to 62: customers are paying more slowly. Dissatisfaction is one possible cause, not a conclusion.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span><span class="pv read">My analysis</span></span></span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="voices"><div class="wrap">
+  <div class="sec-head"><span class="tag">Interviews</span><h2>Two executives, two lenses</h2><p>Same company, different vantage points. Each card shows what they emphasized and what they didn’t raise.</p></div>
+  <div class="grid2e" id="voices-grid"></div>
+</div></section>
+
+<section id="connections" class="band-pink"><div class="wrap">
+  <div class="sec-head"><span class="tag">Synthesis</span><h2>Where the voices connect, differ and leave gaps</h2><p>Open any theme to see the evidence behind it and the pyramid cell it lands in. Green is the CRO, purple is the CHRO.</p></div>
+  <div class="legend-row"><span class="src cro">CRO John Anderson</span><span class="src chro">CHRO Amara Johnson</span><span style="color:var(--muted)">Grey = not raised</span></div>
+  <div id="themes"></div>
+  <h3 class="group-title">What neither executive said</h3>
+  <p class="group-sub">Gaps are where the next conversation has the most to add. <span class="pv read">My analysis</span> of what the notes leave out.</p>
+  <div class="gaps" id="gaps"></div>
+</div></section>
+
+<section id="pyramid"><div class="wrap">
+  <div class="sec-head"><span class="tag">Framework</span><h2>Where Uniforce is aligned, and where it isn’t</h2><p>Select a cell to see its evidence. Select a misalignment to see which cells it connects and how many independent sources point to it. Tags and statuses are my analysis.</p></div>
+  <div class="pyr-wrap">
+    <div>
+      <div class="pyr-heads"><div>People &amp; Culture</div><div>Strategic Intent</div></div>
+      <div class="tier t1"><div class="tl">Purpose</div><button class="cell p" data-cell="values"></button><button class="cell p" data-cell="vision"></button></div>
+      <div class="tier t2" style="margin-top:28px"><div class="tl">Direction</div><button class="cell d" data-cell="mindset"></button><button class="cell d" data-cell="strategy"></button></div>
+      <div class="tier t3" style="margin-top:28px"><div class="tl">Action</div><button class="cell a" data-cell="org"></button><button class="cell a" data-cell="init"></button></div>
+      <div class="outcome-strip"><button class="cell" data-cell="outcome"></button></div>
+      <div class="mis-btns" role="group" aria-label="Highlight a misalignment">
+        <button class="btn" data-mis="M1" aria-pressed="false">Misalignment 1</button>
+        <button class="btn" data-mis="M2" aria-pressed="false">Misalignment 2</button>
+        <button class="btn" data-mis="M0" aria-pressed="false">Purpose watch</button>
+      </div>
+      <div id="mis-card"></div>
+    </div>
+    <div class="card" id="cell-panel" aria-live="polite"></div>
+  </div>
+</div></section>
+
+<section id="ledger" class="band-grey"><div class="wrap">
+  <div class="sec-head"><span class="tag">Evidence</span><h2>Every point, tagged to the pyramid</h2><p>Each data point and interview point has a pyramid cell, a “so what” and a label showing where it comes from. Disagree with a tag? Change it here. Your changes stay in this browser.</p></div>
+  <div class="filters" id="filters"></div>
+  <div id="ledger-rows"></div>
+</div></section>
+
+<section id="validate" class="band-dark"><div class="wrap">
+  <div class="sec-head"><span class="tag">Next step</span><h2>What we still need to validate</h2><p>These open questions are my analysis of what the evidence leaves unanswered. They become the spine of the Jamie interview.</p></div>
+  <div class="ask-list" id="asks"></div>
+</div></section>
+</main>
+<main class="only-summary" id="summary-view">
+
+<section id="sum-intro"><div class="wrap">
+  <div class="sec-head"><span class="tag">Summary</span><h2>What we found</h2><p>Three parts: where the business stands, what leaders told us, and where to focus first. Each part ends with a question for the room, and the full analysis behind it is one click away.</p></div>
+  <div class="askmap">
+    <div class="askcard"><b>Part 1</b><h3>The state of the business</h3><p>Where Uniforce is today: the numbers, the challenges and the gaps.</p></div>
+    <div class="askcard"><b>Part 2</b><h3>What leaders told us</h3><p>What the CRO and CHRO told us, grounded in the business, plus what BTS still needs to find out.</p></div>
+    <div class="askcard"><b>Part 3</b><h3>Two misalignments and how BTS could help</h3><p>The top two gaps on the culture/strategy pyramid, our initial ideas, and the information we’d need to start acting.</p></div>
+  </div>
+  
+</div></section>
+
+<section id="sum-1"><div class="wrap">
+  <div class="sec-head"><span class="tag">State of the business</span><h2>A profitable company that is slowly losing its customers</h2><p>Uniforce is not short of money. It is short of customers who stay.</p></div>
+  <div class="grid3">
+    <div class="card"><div class="t" style="color:var(--muted);font-size:15px;margin-bottom:8px">Retention of existing customers</div><div class="big">46%</div><p style="margin-top:8px;font-weight:300">Down from 49% two years ago. More customers leave each year than join.</p><div class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span></div></div>
+    <div class="card"><div class="t" style="color:var(--muted);font-size:15px;margin-bottom:8px">Share of new customers in the market</div><div class="big">8.0%</div><p style="margin-top:8px;font-weight:300">Down from 9.0%. The market’s new customers grew 16% in two years while Uniforce’s grew 3%.</p><div class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span></div></div>
+    <div class="card"><div class="t" style="color:var(--muted);font-size:15px;margin-bottom:8px">Net change in customers this year</div><div class="big">−7,511</div><p style="margin-top:8px;font-weight:300">239,701 customers left and 232,190 joined. It is the largest drop in three years.</p><div class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span></div></div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>Challenges and gaps</h3>
+    <div class="read">
+      <div class="item"><b>The self-serve bet broke</b><span>Uniforce built for customers who learn on their own. Phase 1 found they can’t, and some leave for competitors.<span class="prov"><span class="pv case">From Uniforce</span></span></span></div>
+      <div class="item"><b>Competitors lead after the sale</b><span>New entrants win on personalized onboarding and post-sales support.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv note">Interview note</span></span></span></div>
+      <div class="item"><b>Innovation looks flat</b><span>R&amp;D has held near $3.0M, about 2.7–2.8% of revenue, and price has been $250 for three years.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv calc">Calculated</span></span></span></div>
+      <div class="item"><b>Nobody owned the customer after the sale</b><span>The company was built around product and sales. Customer Success is brand new, and the rest of the organization hasn’t yet changed how it works.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv note">Interview note</span></span></span></div>
+      <div class="item"><b>Not a funding problem</b><span>Operating margin is still about 49% and debt-to-equity is 0.2. The constraint is how people work and what they’re measured on.<span class="prov"><span class="pv case">From Uniforce</span><span class="pv read">My analysis</span></span></span></div>
+    </div>
+    <div class="bridge">The financials show where the leak is: customers leaving, not customers missing. The interviews explain why a new team alone won’t close it.<div class="prov" style="margin-top:8px"><span class="pv read">My analysis</span><span>The hand-off from the numbers to what leaders told us</span></div></div>
+    <div class="prov" style="margin-top:18px"><span class="pv read">Question for the room</span><span>Which of these gaps surprises you most, given what you saw in Phase 1?</span></div>
+  </div>
+</div></section>
+
+<section id="sum-themes" class="band-pink"><div class="wrap">
+  <div class="sec-head"><span class="tag">Interview themes</span><h2>Both executives point at the same problem from different angles</h2><p>The CRO sees revenue and market pressure. The CHRO sees change leadership and accountability. Four themes carry across both.</p></div>
+  <div class="grid2e">
+    <div class="card"><h3>Teams aren’t customer-centric yet</h3><p style="font-weight:300">Outside support, teams focus on internal priorities. Customer Success can’t be the only advocate for the customer.</p><div class="prov"><span class="chip c-mindset">Mindset and behaviors</span><span class="pv note">Interview note</span><span class="pv read">Raised by both</span></div></div>
+    <div class="card"><h3>Customer Success is necessary, not sufficient</h3><p style="font-weight:300">A vital step, but departments must change how they work to make use of it.</p><div class="prov"><span class="chip c-strategy">Strategies</span><span class="pv note">Interview note</span><span class="pv read">Raised by both</span></div></div>
+    <div class="card"><h3>Goals and success measures don’t line up</h3><p style="font-weight:300">Each function chases its own number, and departments read “success” differently. That makes accountability hard.</p><div class="prov"><span class="chip c-org">Organizational shifts and people processes</span><span class="pv note">Interview note</span><span class="pv read">Raised by both</span></div></div>
+    <div class="card"><h3>Leaders have to lead the change</h3><p style="font-weight:300">Leaders at every level struggle to guide people through change, and mid-level leaders matter most.</p><div class="prov"><span class="chip c-mindset">Mindset and behaviors</span><span class="pv note">Interview note</span><span class="pv read">Raised by both</span></div></div>
+  </div>
+  <h3 class="group-title" style="margin-top:44px">In their words</h3>
+  <p class="group-sub">One from each leader, anonymized. Each one points at a misalignment.</p>
+  <div class="twocol">
+    <figure class="quote">
+      <blockquote>“…they can’t be the only ones advocating for customers.”</blockquote>
+      <figcaption>A senior leader, on Customer Success</figcaption>
+      <div class="prov"><span class="pv note">Interview note</span><span class="chip c-mindset">Mindset and behaviors</span><span>Ties to misalignment 1</span></div>
+    </figure>
+    <figure class="quote two">
+      <blockquote>“…teams can shift blame or argue they met their own interpretation of success.”</blockquote>
+      <figcaption>A senior leader, on goals and metrics</figcaption>
+      <div class="prov"><span class="pv note">Interview note</span><span class="chip c-org">Organizational shifts and people processes</span><span>Ties to misalignment 2</span></div>
+    </figure>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>Barriers to watch</h3>
+    <ul class="cl">
+      <li><b>Customer Success becomes a bolt-on.</b> The rest of the organization carries on as before.</li>
+      <li><b>Leaders can’t yet guide people through change</b>, especially mid-level leaders.</li>
+      <li><b>Each function defines success differently</b>, so accountability is hard.</li>
+      <li><b>Employees are uneasy</b> because they don’t know what will change, and the announcement is ahead of the readiness.</li>
+      <li><b>Habit.</b> “The way we’ve always done it” is the default.</li>
+    </ul>
+    <div class="prov"><span class="pv note">Interview note</span><span class="pv read">My analysis</span></div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>What BTS still needs to find out</h3>
+    <ul class="cl">
+      <li><b>Incentives and pay.</b> Neither executive said whether pay and targets reward customer outcomes.</li>
+      <li><b>The Customer Success team’s design.</b> Scope, size, reporting line, and handoffs from sales.</li>
+      <li><b>The missing voices.</b> Product, support, marketing, sales, and the future Customer Success lead.</li>
+      <li><b>What “customer-centric” looks like in practice</b>, function by function.</li>
+      <li><b>What has changed since Phase 1</b>, and how employees reacted to the announcement.</li>
+    </ul>
+    <div class="prov"><span class="pv read">My analysis</span><span>These are the gaps we’re testing with Jamie. Anything Jamie adds goes into this slide.</span></div>
+    <div class="prov"><span class="pv read">Question for the room</span><span>Where do the revenue lens and the people lens meet, and whose voice are we still missing?</span></div>
+  </div>
+</div></section>
+
+<section id="sum-3"><div class="wrap">
+  <div class="sec-head"><span class="tag">Top two misalignments</span><h2>Two misalignments to focus on first</h2><p>We didn’t pick these in advance. We tagged every point to the pyramid and these two fell out of the pattern.</p></div>
+  <div class="twocol">
+    <div class="card mis-big">
+      <h3>1 · Strategy and behaviors</h3>
+      <p style="font-weight:500;font-size:19px;margin:6px 0 10px">The strategy is customer-centric. The mindsets and behaviors aren’t, yet.</p>
+      <div class="prov" style="margin-top:0"><span class="chip c-strategy">Strategies</span><span aria-hidden="true">↔</span><span class="chip c-mindset">Mindset and behaviors</span></div>
+      <p style="margin-top:14px;font-weight:300"><b style="font-weight:500">Why it comes first:</b> the CRO raised it unprompted and the CHRO confirmed it with examples of their own, and it is the pyramid’s classic left-to-right gap. The new strategy and structure arrive, and the mindset shift gets left for later.</p>
+      <div class="prov"><span class="pv read">My analysis</span><span data-mis-count="M1"></span></div>
+    </div>
+    <div class="card mis-big two">
+      <h3>2 · Direction and measures</h3>
+      <p style="font-weight:500;font-size:19px;margin:6px 0 10px">The direction isn’t backed by shared measures, accountability and ways of working.</p>
+      <div class="prov" style="margin-top:0"><span class="chip c-strategy">Strategies</span><span aria-hidden="true">↓</span><span class="chip c-org">Organizational shifts</span><span class="chip c-init">Initiatives and workflows</span></div>
+      <p style="margin-top:14px;font-weight:300"><b style="font-weight:500">Why it comes next:</b> each function still works to its own number, which is the pyramid’s top-to-bottom gap: asking for a big shift while measures stay the same. Pay and targets are the open question.</p>
+      <div class="prov"><span class="pv read">My analysis</span><span data-mis-count="M2"></span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>What we considered and set aside</h3>
+    <ul class="cl">
+      <li><b>The Purpose tier.</b> The vision looks clear at the top, so the gap is making it real. We’ll keep testing it with Jamie.</li>
+      <li><b>Capability gaps.</b> Real, but they show up inside both misalignments: leaders’ change skills in the first, functional skills in the second. Training alone won’t change what people are measured on.</li>
+      <li><b>Competition and the pace of innovation.</b> Real, but Customer Success is Uniforce’s response to them. Phase 2 is about the new ways of working that response needs.</li>
+    </ul>
+    <div class="prov"><span class="pv read">My analysis</span></div>
+  </div>
+</div></section>
+
+<section id="sum-help" class="band-grey"><div class="wrap">
+  <div class="sec-head"><span class="tag">How BTS could help</span><h2>Initial ideas, and what we’d need to know to start</h2><p>Uniforce brought BTS in for Phase 2 to help define new ways of working, and to help leaders understand how Customer Success changes their business model, teaming and measures of success. These first ideas are built around that, and will be refined after the Jamie interview. They run in parallel: shared measures tend to move behavior fastest, while leader capability takes longer.</p></div>
+  <div class="twocol">
+    <div class="card">
+      <h3>For strategy and behaviors</h3>
+      <ul class="cl">
+        <li>A leadership alignment session that defines what customer-centric looks like in observable behaviors, by function, and turns it into new ways of working: how product, sales, marketing and support involve each other and the customer.</li>
+        <li>Targeted development for mid-level leaders: enterprise thinking and leading through change.</li>
+        <li>Customer-voice immersion, so product, sales and marketing hear churned-customer feedback directly.</li>
+        <li>Find and equip early champions who already model the shift.</li>
+      </ul>
+      <p style="margin-top:14px;font-weight:500">To start, we’d need:</p>
+      <ul class="cl"><li>What “good” looks like by function.</li><li>Which leaders need support first.</li><li>Who is already modeling the shift.</li></ul>
+    </div>
+    <div class="card">
+      <h3>For direction and measures</h3>
+      <ul class="cl">
+        <li>Co-design a shared customer scorecard (retention, NPS, usage, revenue per user) and cascade it by function.</li>
+        <li>Define how Customer Success works with sales, marketing, product and support (decision rights, handoffs and forums), so the new team changes how work gets done, not only who does it.</li>
+        <li>Build accountability routines around the scorecard.</li>
+        <li>Review how pay and targets line up with the shared goal.</li>
+      </ul>
+      <p style="margin-top:14px;font-weight:500">To start, we’d need:</p>
+      <ul class="cl"><li>Where pay and targets point today.</li><li>Who is accountable when a customer leaves.</li><li>How Customer Success will be measured.</li></ul>
+    </div>
+  </div>
+  <div class="prov" style="margin-top:16px"><span class="pv read">My analysis</span><span>Draft ideas to refine with Uniforce, not a finished solution. Each comes with its rationale and what we’d need to learn first.</span></div>
+  <div class="prov"><span class="pv read">Question for the room</span><span>Do these two feel like the right ones to start with, and what would change your mind?</span></div>
+</div></section>
+
+<section id="sum-next"><div class="wrap">
+  <div class="sec-head"><span class="tag">Next steps</span><h2>What happens next</h2><p>Five steps, and what we’d like from the team today.</p></div>
+  <div class="twocol">
+    <div class="card">
+      <h3>Next steps</h3>
+      <ol class="cl">
+        <li><b>Hear the voices we haven’t:</b> product, support, marketing and sales leaders, and the future Customer Success lead.</li>
+        <li><b>Test the incentives question:</b> where pay and targets point today.</li>
+        <li><b>Co-design a first version</b> of the shared customer scorecard with the leadership team.</li>
+        <li><b>Agree how Customer Success works</b> with sales, marketing, product and support.</li>
+        <li><b>Define what customer-centric looks like</b> in behavior, by function, with mid-level leaders.</li>
+      </ol>
+      <div class="prov"><span class="pv read">My analysis</span></div>
+    </div>
+    <div class="card">
+      <h3>What we’d like from the team</h3>
+      <ul class="cl">
+        <li>Your reaction: are these the right two places to start?</li>
+        <li>Whose voice should we add next, and who can open the door?</li>
+        <li>Where have you seen this pattern before, and what worked?</li>
+      </ul>
+      <div class="prov"><span class="pv read">Question for the room</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="sum-prep" class="band-dark"><div class="wrap">
+  <div class="sec-head"><span class="tag">How we got here</span><h2>From the data to two misalignments, with the evidence in view</h2><p>The short version of how we reached these conclusions.</p></div>
+  <div class="steps">
+    <div class="pstep"><div class="stepn">1</div><h3>Read everything</h3><p>Uniforce’s background, the financials, both interviews, and the pyramid.</p></div>
+    <div class="pstep"><div class="stepn">2</div><h3>Mapped every point</h3><p><span data-ev-total></span> points, each tagged to a pyramid cell and labeled by where it came from.</p></div>
+    <div class="pstep"><div class="stepn">3</div><h3>Let the pattern show</h3><p>The two misalignments fell out of the tagging. We didn’t choose them first.</p></div>
+    <div class="pstep"><div class="stepn">4</div><h3>Planned to validate</h3><p>A 20-minute interview built to check our two hypotheses and fill the gaps, not to repeat what we knew.</p></div>
+    <div class="pstep"><div class="stepn">5</div><h3>Update after Jamie</h3><p>New facts either confirm, challenge or add to the picture, and the recommendations follow.</p></div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>Where we were careful</h3>
+    <ul class="cl">
+      <li>Every figure is labeled: from Uniforce, calculated, estimate, interview note, or my analysis.</li>
+      <li>Two or more independent sources sit behind each misalignment.</li>
+      <li>We never attribute comments to named executives, and we flag our hypotheses as hypotheses.</li>
+    </ul>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>What could change after Jamie</h3>
+    <div class="pend"><span class="pv est">Pending</span><span>Does Jamie confirm or challenge the strategy-and-behaviors gap?</span></div>
+    <div class="pend"><span class="pv est">Pending</span><span>What does Jamie say about pay, targets and accountability?</span></div>
+    <div class="pend"><span class="pv est">Pending</span><span>Are there new barriers or decisions on Customer Success?</span></div>
+    <div class="pend"><span class="pv est">Pending</span><span>Does anything change which two misalignments come first?</span></div>
+  </div>
+</div></section>
+
+</main>
+
+
+<main class="only-qa" id="qa-view">
+
+<section id="qa-intro"><div class="wrap">
+  <div class="sec-head"><span class="tag">Q&amp;A prep</span><h2>The questions we should expect, and what the evidence says</h2><p>Each answer starts with the answer, then shows the evidence behind it and what we don’t know yet. Where we don’t know, we say so.</p></div>
+  <div class="twocol">
+    <div class="card">
+      <h3>What we can’t answer yet</h3>
+      <ul class="cl">
+        <li>How the CRO defines “sales” when describing them as declining.</li>
+        <li>What drives free cash flow and days sales outstanding.</li>
+        <li>Whether pay and targets reward customer outcomes.</li>
+        <li>The Customer Success team’s scope, size and reporting line.</li>
+        <li>What Jamie confirmed, challenged or added.</li>
+      </ul>
+      <div class="prov"><span class="pv read">My analysis</span><span>Saying “we don’t know yet, and here’s how we’d find out” is a strong answer.</span></div>
+    </div>
+    <div class="card">
+      <h3>Answering well</h3>
+      <ul class="cl">
+        <li>Lead with the answer in one sentence, then the evidence.</li>
+        <li>Name what is a figure, a calculation, an estimate, or my analysis.</li>
+        <li>Turn hard questions back to the room: “What would you want to know to be sure?”</li>
+      </ul>
+      <div class="prov"><button class="btn" type="button" data-qa-all="open">Open all</button><button class="btn" type="button" data-qa-all="close">Close all</button></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="qa-numbers" style="padding-top:40px"><div class="wrap">
+  <h3 class="group-title" style="margin-top:0">The numbers</h3>
+  <p class="group-sub">Questions about the financials and the claims we built from them.</p>
+
+  <details class="qa"><summary>“Is ‘declining sales’ really the problem?”</summary><div class="qb">
+    <p class="ans">Mostly it’s customers leaving and share slipping, not deals going unclosed.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Churned customers rose 4.4% in two years (229,500 to 239,701). New customers rose 3.2% (225,000 to 232,190). <span class="pv calc">Calculated</span></li>
+      <li>Retention fell from 49% to 46%, and the share of new customers fell from 9.0% to 8.0%. <span class="pv case">From Uniforce</span></li>
+      <li>Revenue follows the customer base almost one for one at a flat $250, so a shrinking base is a shrinking top line. <span class="pv calc">Calculated</span></li>
+    </ul>
+    <h4>If pushed</h4>
+    <p>Both executives describe declining sales, and they’re right about the symptom. We’d name the cause precisely so the fix is aimed at the right thing. <span class="pv read">My analysis</span></p>
+    <h4>Not known yet</h4>
+    <p>How the CRO defines “sales.” The CRO cites three quarters, and the financials are annual.</p>
+  </div></details>
+
+  <details class="qa"><summary>“How did you get to the value of one point of retention?”</summary><div class="qb">
+    <p class="ans">About $1.1M a year, and it’s an estimate.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>One point on this year’s opening base of 443,890 is about 4,439 customers. At $250 each, that’s about $1.11M. <span class="pv est">Estimate</span></li>
+      <li>It assumes each saved customer pays for a full year. It is not a forecast.</li>
+      <li>For scale: this year’s increase in sales and marketing spend was about $0.45M. <span class="pv calc">Calculated</span></li>
+    </ul>
+    <h4>Not known yet</h4>
+    <p>When in the year customers leave, and whether saved customers would renew.</p>
+  </div></details>
+
+  <details class="qa"><summary>“Free cash flow is more than double operating profit. Does that make sense?”</summary><div class="qb">
+    <p class="ans">It looks off to us, so we’d flag it and ask finance rather than build on it.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Free cash flow is $113.5M against operating profit of $53.7M this year, about 2.1 times. <span class="pv case">From Uniforce</span> <span class="pv calc">Calculated</span></li>
+      <li>Rising days sales outstanding would normally tie cash up, not free it. <span class="pv read">My analysis</span></li>
+    </ul>
+    <h4>Not known yet</h4>
+    <p>What sits in free cash flow: non-cash items, working capital, or a different definition.</p>
+  </div></details>
+
+  <details class="qa"><summary>“Why did days sales outstanding go from 50 to 62?”</summary><div class="qb">
+    <p class="ans">We don’t know yet. We’d treat it as a hypothesis to test, not a finding.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Days sales outstanding went 50, then 56, then 62. <span class="pv case">From Uniforce</span></li>
+      <li>Possible causes: unhappy customers paying slowly, billing friction, or something unrelated. <span class="pv read">My analysis</span></li>
+    </ul>
+    <h4>How we’d find out</h4>
+    <p>Ask finance whether late payers cluster among customers at risk of leaving.</p>
+  </div></details>
+
+  <details class="qa"><summary>“Margins are strong. Why not just invest more in product and marketing?”</summary><div class="qb">
+    <p class="ans">Money isn’t the constraint. Where it goes, and what people are measured on, is.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Operating margin is about 49% and debt-to-equity is 0.2. <span class="pv case">From Uniforce</span></li>
+      <li>Sales and marketing spend rose about 9% this year while the share of new customers fell. <span class="pv calc">Calculated</span></li>
+      <li>One point of retention is worth more than twice that spend increase. <span class="pv est">Estimate</span></li>
+    </ul>
+  </div></details>
+</div></section>
+
+<section id="qa-interviews" class="band-grey"><div class="wrap">
+  <h3 class="group-title" style="margin-top:0">The interviews</h3>
+  <p class="group-sub">Questions about how much weight the conversations can carry.</p>
+
+  <details class="qa"><summary>“Two executives isn’t much. How confident are you?”</summary><div class="qb">
+    <p class="ans">Confident in the pattern, less so in the details, and Jamie adds a third voice.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Misalignment 1 has <span data-mis-count="M1"></span>. Misalignment 2 has <span data-mis-count="M2"></span>. <span class="pv read">My analysis</span></li>
+      <li>Both executives raised these four themes. The CHRO was asked directly about the mindset gap and agreed, adding examples; the CRO raised it unprompted. <span class="pv note">Interview note</span></li>
+    </ul>
+    <h4>Not known yet</h4>
+    <p>Product, support, marketing and sales leaders, and the future Customer Success lead, haven’t been heard.</p>
+  </div></details>
+
+  <details class="qa"><summary>“The CRO and CHRO framed this differently. Who’s right?”</summary><div class="qb">
+    <p class="ans">Both, because they’re looking at different ends of the same problem.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>The CRO emphasizes revenue, competition and functional skills. The CHRO emphasizes leaders’ change skills and accountability. <span class="pv note">Interview note</span></li>
+      <li>They agree on four things: the customer-centric mindset is missing, Customer Success is necessary but not enough, goals are siloed, and leaders have to lead the change. <span class="pv note">Interview note</span></li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>“What did Jamie add?”</summary><div class="qb">
+    <p class="ans"><span class="pv est">Pending</span> To update after the interview.</p>
+    <h4>Fill in</h4>
+    <ul class="cl">
+      <li>What Jamie confirmed, challenged, or added that was new.</li>
+      <li>What Jamie said about pay, targets and accountability.</li>
+      <li>New barriers, and any decisions on Customer Success.</li>
+    </ul>
+  </div></details>
+</div></section>
+
+<section id="qa-focus"><div class="wrap">
+  <h3 class="group-title" style="margin-top:0">The two misalignments</h3>
+  <p class="group-sub">Questions about why these two, and how they relate.</p>
+
+  <details class="qa"><summary>“Why these two, and not the Purpose tier or the capability gaps?”</summary><div class="qb">
+    <p class="ans">These two had the most evidence and are the ones new ways of working can change first.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li><b>Purpose:</b> the vision looks clear at the top, with the fewest evidence points. The gap is making it real. <span class="pv note">Interview note</span> <span class="pv read">My analysis</span></li>
+      <li><b>Capability gaps:</b> they show up inside both misalignments, in leaders’ change skills and functional skills. <span class="pv read">My analysis</span></li>
+      <li><b>Competition and innovation pace:</b> real, but Customer Success is Uniforce’s response to them. <span class="pv read">My analysis</span></li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>“Aren’t these really the same problem?”</summary><div class="qb">
+    <p class="ans">They feed each other, but they need different fixes.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Behaviors are what people think and do. Measures are what the system rewards and routes. People tend to do what they’re measured on. <span class="pv read">My analysis</span></li>
+      <li>Changing measures alone doesn’t give leaders the skills to lead the shift, so we’d run both in parallel. <span class="pv read">My analysis</span></li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>“Which comes first?”</summary><div class="qb">
+    <p class="ans">Start both. If we had to pick one lever for speed, it’s the shared measures.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Shared measures tend to move behavior fastest. Leader capability takes longer. This is judgment, not proof. <span class="pv read">My analysis</span></li>
+    </ul>
+    <h4>Not known yet</h4>
+    <p>What is already in motion at Uniforce. Jamie may know.</p>
+  </div></details>
+
+  <details class="qa"><summary>“What would change your mind?”</summary><div class="qb">
+    <p class="ans">Two things would change the order.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>If pay and targets already reward customer outcomes, misalignment 2 gets weaker. <span class="pv read">My analysis</span></li>
+      <li>If behavior outside support is already customer-first, misalignment 1 gets weaker. <span class="pv read">My analysis</span></li>
+    </ul>
+    <h4>Update after Jamie</h4>
+    <p><span class="pv est">Pending</span></p>
+  </div></details>
+</div></section>
+
+<section id="qa-recs" class="band-pink"><div class="wrap">
+  <h3 class="group-title" style="margin-top:0">The recommendations</h3>
+  <p class="group-sub">Questions about what BTS would do, and how it fits with what Uniforce already plans.</p>
+
+  <details class="qa"><summary>“How is this different from the training and messaging Uniforce already has in mind?”</summary><div class="qb">
+    <p class="ans">It adds the pieces that make training stick: shared measures, decision rights and accountability.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Uniforce’s current ideas are change-management training, customer-centric training and top-down messaging, with no comprehensive approach yet. <span class="pv note">Interview note</span></li>
+      <li>Our ideas are about how work gets done, which is what Phase 2 asked for. <span class="pv read">My analysis</span></li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>“What’s BTS’s role, and what should Uniforce’s own team lead?”</summary><div class="qb">
+    <p class="ans">We help define the new ways of working. Uniforce owns the decisions.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Phase 2 scope: define new ways of working, and help leaders understand how Customer Success changes their business model, teaming and measures of success. <span class="pv case">From Uniforce</span></li>
+      <li>We’re asking Jamie where outside help would be most welcome. <span class="pv read">My analysis</span></li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>“What does success look like in six months?”</summary><div class="qb">
+    <p class="ans">Leading indicators first, retention after.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>Uniforce’s planned scorecard: retention, NPS, product usage, revenue per user, and employee feedback inside and outside Customer Success. <span class="pv case">From Uniforce</span></li>
+      <li>Usage and NPS should move before retention does. <span class="pv read">My analysis</span></li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>“What would you do first?”</summary><div class="qb">
+    <p class="ans">Hear the missing voices, test the incentives question, and co-design the first version of the scorecard.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li>These are the first three next steps in the Summary. <span class="pv read">My analysis</span></li>
+    </ul>
+  </div></details>
+</div></section>
+
+<section id="qa-process"><div class="wrap">
+  <h3 class="group-title" style="margin-top:0">How we got here</h3>
+  <p class="group-sub">Questions about method.</p>
+
+  <details class="qa"><summary>“Where did these numbers and tags come from?”</summary><div class="qb">
+    <p class="ans">Every figure and note is labeled, and the tags are open to challenge.</p>
+    <h4>Evidence</h4>
+    <ul class="cl">
+      <li><span data-ev-total></span> points, each tagged to a pyramid cell and labeled by source: from Uniforce, interview note, calculated, estimate, or my analysis.</li>
+      <li>The full ledger, with the “so what” for each point, is in the Full analysis view.</li>
+    </ul>
+  </div></details>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  <div class="src-note">Sources: Uniforce background and financial overview, Phase 2 interviews with the CRO and CHRO, and the BTS Culture/Strategy Pyramid. Pyramid tags, status labels and “so what” notes are labeled “My analysis”: a first read to start the team conversation.</div>
+  <div class="copy">Copyright © 2026 BTS</div>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+var nf=new Intl.NumberFormat("en-US");
+var $=function(s,el){return (el||document).querySelector(s)};
+var $$=function(s,el){return Array.prototype.slice.call((el||document).querySelectorAll(s))};
+
+/* ---------- client data ---------- */
+var Y=["Year −2","Year −1","Current"];
+var FIN={
+  opening:[450000,445500,443890], newC:[225000,230050,232190], churned:[229500,231660,239701],
+  market:[2500000,2675000,2902375], share:[9.0,8.6,8.0], retention:[49,48,46],
+  revenue:[111375000,110972500,109094850], opMargin:[50.6,50.2,49.2],
+  sm:[5000000,4950600,5400000], dso:[50,56,62], price:250
+};
+
+var CELLS={
+  values:{label:"Values",tier:"Purpose",side:"People & Culture"},
+  vision:{label:"Vision & goals",tier:"Purpose",side:"Strategic Intent"},
+  mindset:{label:"Mindset & behaviors",tier:"Direction",side:"People & Culture"},
+  strategy:{label:"Strategies",tier:"Direction",side:"Strategic Intent"},
+  org:{label:"Organizational shifts & people processes",tier:"Action",side:"People & Culture"},
+  init:{label:"Initiatives, workflows & systems",tier:"Action",side:"Strategic Intent"},
+  outcome:{label:"Outcomes (symptoms, not a cell)",tier:"Result",side:""}
+};
+var CELL_ORDER=["values","vision","mindset","strategy","org","init","outcome"];
+var SRC={cro:"CRO",chro:"CHRO",case:"Phase 1 / background",fin:"Financials"};
+var SRC_COLOR={cro:"var(--s-cro)",chro:"var(--s-chro)",case:"var(--s-case)",fin:"var(--s-fin)"};
+
+var CELLINFO={
+  values:{st:"unk",status:"Unclear, validate",read:"The CHRO calls Uniforce a great place to work with a strong culture, but nobody has said what the values say about customers. A strong employee culture can still be inward-facing."},
+  vision:{st:"mid",status:"Clear at the top, not cascading",read:"The CRO can state the goal: helping customers manage their relationships. The founding mission (self-serve) is being reversed, and each function still works to its own number."},
+  mindset:{st:"bad",status:"Misaligned",read:"The most-cited cell, raised by both executives: internal focus, fear of the customer, habit, and leaders who lack the skills to lead change."},
+  strategy:{st:"mid",status:"Direction set, not yet real",read:"The customer-centric direction and the Customer Success team are announced. Neither executive can point to a comprehensive plan, and competitors already lead on post-sales support."},
+  org:{st:"bad",status:"Misaligned",read:"Vague and siloed metrics, no shared definition of success, weak accountability, and capability gaps in functions and in leadership."},
+  init:{st:"bad",status:"Misaligned",read:"Reactive support, no forums between marketing, sales and product, long development cycles, and spend weighted toward winning customers instead of keeping them."},
+  outcome:{st:"unk",status:"Symptoms",read:"Falling retention, lost share and slowing revenue appear here. They are results of the cells above, so they show impact, not cause."}
+};
+
+/* ---------- evidence ledger ---------- */
+var EV=[
+ {id:"C1",src:"cro",cell:"outcome",th:["comp"],t:"Names declining sales as the most pressing issue: revenue down over the past three quarters, hurting market position and shareholder confidence.",so:"A symptom. The financials place it in churn and lost share, not only lost deals. Check how the CRO defines “sales”."},
+ {id:"C2",src:"cro",cell:"strategy",th:["comp"],t:"New entrants sell similar products for less and lead with post-sales support and personalized onboarding.",so:"Competitors have made post-sales support part of their strategy. Uniforce’s self-serve bet is now a disadvantage."},
+ {id:"C3",src:"cro",cell:"init",th:["comp"],t:"Long product development cycles and no recent significant updates or new features.",so:"A workflow problem. Flat R&D spend fits it (see F5)."},
+ {id:"C4",src:"cro",cell:"mindset",th:["mind"],t:"Churned customers say Uniforce isn’t listening to their needs.",so:"Customers experience the mindset gap directly."},
+ {id:"C5",src:"cro",cell:"init",th:["support"],t:"Support is reactive: it responds only after problems escalate and customers can’t use the product. Customers want proactive help.",so:"Proactive support is a new way of working, not only a new team."},
+ {id:"C6",src:"cro",cell:"strategy",th:["selfserve"],t:"Customers believed the software was user-friendly and that they could self-learn. That turned out not to be true.",so:"The original strategic assumption is the root of the gap."},
+ {id:"C7",src:"cro",cell:"init",th:["crossfn"],t:"Marketing launches campaigns without sales input. Product builds features without consulting sales or marketing.",so:"The forums and handoffs between functions don’t exist yet."},
+ {id:"C8",src:"cro",cell:"org",th:["metrics"],t:"Each function chases its own goal: marketing leads and brand, sales quota, product releases. None sees how they add up to helping customers.",so:"Measures reward function-level wins, so the shared goal doesn’t drive daily choices."},
+ {id:"C9",src:"cro",cell:"vision",th:["metrics"],t:"States the shared goal clearly: helping customers better manage their relationships.",so:"The goal is clear at the top. C8 suggests it doesn’t reach the functions."},
+ {id:"C10",src:"cro",cell:"mindset",th:["cs","support"],t:"Support is overstretched, and the Customer Success team can’t be the only group advocating for customers.",so:"Risk: Customer Success becomes a bolt-on while everyone else carries on."},
+ {id:"C11",src:"cro",cell:"mindset",th:["mind","change"],t:"Calls for enterprise thinking at every level of leadership, especially mid-level leaders, so people weigh company success over function success.",so:"Mid-level leaders are the pivot point for behavior change."},
+ {id:"C12",src:"cro",cell:"org",th:["cap"],t:"Skill gaps by function: sales lacks advanced analytics, product lacks emerging-tech expertise and a customer-first mindset, marketing is traditional and light on digital.",so:"Capability is framed by function. It leaves out leaders’ ability to lead change (the CHRO’s gap)."},
+ {id:"C13",src:"cro",cell:"strategy",th:["cs","plan"],t:"Calls the Customer Success team a vital step forward, but one piece of the puzzle and not a comprehensive solution.",so:"The CRO wants a broader transformation than the team launch alone."},
+ {id:"C14",src:"cro",cell:"org",th:["plan"],t:"Remedies the CRO lists: a collaborative culture, processes for joint decision-making, targeted training, strategic hiring, outside expertise, better tools.",so:"Heavy on training and process. No mention of incentives, decision rights or how Customer Success operates."},
+ {id:"H1",src:"chro",cell:"values",th:["culture"],t:"Describes Uniforce as a great place to work with a strong culture, while sales growth slips and customers move to competitors.",so:"A strong employee culture isn’t the same as a customer-centric one. Check what the stated values say about customers."},
+ {id:"H2",src:"chro",cell:"mindset",th:["change"],t:"The biggest capability gap: leaders lack change management skills and struggle to guide teams through a fast-moving industry.",so:"Leader behavior is the bottleneck on every shift the strategy needs."},
+ {id:"H3",src:"chro",cell:"mindset",th:["change","uneasy"],t:"Leaders at all levels struggle to inspire through transitions. Resistance grows, and employees feel uneasy because they don’t know what will change.",so:"Uncertainty is already present before Customer Success launches."},
+ {id:"H4",src:"chro",cell:"strategy",th:["cs"],t:"Customer Success was announced and is still early-stage. The CHRO worries the leadership and change gaps will show as it launches.",so:"Timing risk: the announcement is ahead of the readiness."},
+ {id:"H5",src:"chro",cell:"mindset",th:["mind"],t:"Agrees the customer-centric mindset is missing. People focus on internal processes and technical detail, and the disconnect from customer expectations drives low retention.",so:"The CHRO links mindset directly to retention."},
+ {id:"H6",src:"chro",cell:"mindset",th:["mind"],t:"Product favors features it finds interesting over what customers ask for. Sales is weak at spotting market and customer needs early.",so:"Two functions, same pattern: internal interest ahead of customer need."},
+ {id:"H7",src:"chro",cell:"org",th:["support","metrics"],t:"Support focuses on closing tickets fast rather than on whether the customer is satisfied.",so:"Hypothesis: a measurement effect. People do what they’re scored on."},
+ {id:"H8",src:"chro",cell:"mindset",th:["resist"],t:"Teams default to “the way we’ve always done it” instead of trying new approaches.",so:"Habit will slow every new way of working."},
+ {id:"H9",src:"chro",cell:"mindset",th:["mind","support"],t:"Teams seem afraid of the customer. Only support is connected to them.",so:"Distance from the customer is the thing Customer Success is meant to close."},
+ {id:"H10",src:"chro",cell:"org",th:["metrics"],t:"Goals and metrics are vague, and each department reads success differently, so accountability and tracking are hard.",so:"No shared definition of success means no shared accountability."},
+ {id:"H11",src:"chro",cell:"org",th:["acct"],t:"Unclear targets create finger-pointing and excuses. The company doesn’t learn from failure or celebrate success.",so:"Without a shared yardstick, learning loops fail."},
+ {id:"H12",src:"chro",cell:"strategy",th:["plan"],t:"No comprehensive approach yet. Ideas so far: change-management training for leaders, customer-centric training for employees, top-down messaging, aligning each department’s goals.",so:"Sequencing question: messaging and training first, metrics later. Behavior may follow measures faster."},
+ {id:"H13",src:"chro",cell:"mindset",th:["acct"],t:"Even once metrics are clear, leaders will still need to learn how to build a culture of accountability.",so:"Metrics alone won’t change behavior. Leaders have to use them."},
+ {id:"B1",src:"case",cell:"vision",th:["selfserve"],t:"Founding mission: a CRM so intuitive that customers manage their relationships independently.",so:"A Purpose-level belief the new direction partly reverses. Has the vision been restated?"},
+ {id:"B2",src:"case",cell:"strategy",th:["selfserve"],t:"Phase 1 found self-serve didn’t hold: customers showed gaps in satisfaction and engagement, so stronger post-sales support is needed.",so:"The strategic case for Customer Success is established."},
+ {id:"B3",src:"case",cell:"strategy",th:["plan"],t:"Phase 2 asks BTS to help define new ways of working and to help leaders understand the impact on business model, teaming and measures of success.",so:"The client has already named the Action tier as where they want help."},
+ {id:"B4",src:"case",cell:"org",th:["metrics"],t:"Planned scorecard: retention, NPS, product usage, revenue per user, and employee feedback inside and outside Customer Success.",so:"Company-level metrics exist. The CHRO says department-level goals aren’t aligned to them yet."},
+ {id:"F1",src:"fin",cell:"outcome",th:[],t:"Retention fell 49% → 48% → 46%. Churned customers rose from 229,500 to 239,701.",so:"The core symptom. Each point is worth roughly $1.1M a year (estimate above)."},
+ {id:"F2",src:"fin",k:"calc",cell:"outcome",th:[],t:"The market’s new customers grew 16% in two years; Uniforce’s grew 3%. Share of new customers fell 9.0% → 8.0%.",so:"Uniforce is losing at acquisition too, consistent with competitors’ stronger post-sales story. Validate."},
+ {id:"F3",src:"fin",k:"calc",cell:"outcome",th:[],t:"The customer base shrinks every year (450,000 → 436,379 over two years), and this year’s drop (−7,511) is the largest.",so:"The leak is accelerating."},
+ {id:"F4",src:"fin",k:"calc",cell:"init",th:[],t:"Sales and marketing spend rose about 9% this year (roughly +$0.45M) while share of new customers fell.",so:"Inference: money is going toward acquisition, and nothing shows investment in retention."},
+ {id:"F5",src:"fin",k:"calc",cell:"init",th:[],t:"R&D has sat near $3.0M a year, about 2.7–2.8% of revenue, and price is flat at $250.",so:"Matches the CRO’s “slow innovation” point."},
+ {id:"F6",src:"fin",cell:"outcome",th:[],t:"Revenue −1.7% this year. Gross margin 64.1% → 63.3%. Operating margin 50.6% → 49.2%.",so:"Margins are still strong, so this isn’t a funding problem."},
+ {id:"F7",src:"fin",cell:"outcome",th:[],t:"Days sales outstanding rose 50 → 56 → 62 days.",so:"Customers are paying more slowly. Hypothesis to test: dissatisfaction or billing friction."}
+];
+var EVBY={};EV.forEach(function(e){EVBY[e.id]=e});
+
+/* ---------- themes ---------- */
+var THEMES=[
+ {id:"mind",g:"shared",title:"The customer-centric mindset is missing",cro:"The rest of the organization lacks it. Customer Success can’t be the only advocate.",chro:"Agrees. People focus on internal processes, and teams seem afraid of the customer.",link:"Same diagnosis. The CHRO goes deeper on why (fear, habit); the CRO goes deeper on the consequence (churn, sales)."},
+ {id:"cs",g:"shared",title:"Customer Success is necessary, not sufficient",cro:"A vital step, but one piece of the puzzle.",chro:"Departments must change how they work to make use of it.",link:"Both worry Customer Success becomes a bolt-on that the rest of the company works around."},
+ {id:"metrics",g:"shared",title:"Siloed goals and unclear success metrics",cro:"Each function chases its own number: leads, quota, releases.",chro:"Goals are vague and every department reads success differently.",link:"The CRO describes the symptom (silos). The CHRO names the mechanism: no shared definition of success, so no shared accountability."},
+ {id:"cap",g:"shared",title:"Capability gaps",cro:"Functional skills: sales analytics, product technology, digital marketing.",chro:"Leadership skills: leading and sustaining change.",link:"Different gaps under the same label. Nobody has said who closes which, so there’s a risk of a training-only answer."},
+ {id:"plan",g:"shared",title:"No comprehensive plan yet",cro:"Lists remedies: collaboration, joint decisions, training, hiring, tools.",chro:"No comprehensive approach yet. Training and top-down messaging so far.",link:"Both lean on training and messaging. Neither mentions incentives, decision rights or how Customer Success will operate."},
+ {id:"support",g:"shared",title:"Support carries the customer alone",cro:"Overstretched and reactive.",chro:"Focused on closing tickets and the only team connected to the customer.",link:"Support is both the bottleneck and the only customer link. The CRO frames it as capacity, the CHRO as what support is scored on."},
+ {id:"change",g:"shared",title:"Leaders and change",cro:"Wants enterprise thinking from all leaders, especially mid-level.",chro:"Leaders lack change management skills. It’s the biggest gap.",link:"Complementary. The CRO says what leaders should think; the CHRO says they can’t yet lead the shift."},
+ {id:"comp",g:"cro",title:"Competitors and slow innovation",cro:"Lower-priced entrants, post-sales support as a rival strength, long product cycles.",link:"A market-facing view the CHRO didn’t raise. The financials support the innovation point (flat R&D) and the share loss."},
+ {id:"crossfn",g:"cro",title:"Broken cross-functional workflows",cro:"Marketing and product act without sales or each other.",link:"A concrete operating example. It tells us where forums and decision rights are missing."},
+ {id:"selfserve",g:"cro",title:"The self-serve assumption broke",cro:"Customers thought they could self-learn. They couldn’t.",link:"Echoes the Phase 1 finding. Only the CRO linked it to what customers say when they leave."},
+ {id:"resist",g:"chro",title:"Resistance to change",chro:"Teams default to “the way we’ve always done it.”",link:"A behavior pattern the CRO didn’t describe, though it sits behind the silos the CRO describes."},
+ {id:"acct",g:"chro",title:"Accountability and finger-pointing",chro:"Unclear targets create excuses and no learning from failure.",link:"The cultural consequence of the metrics gap. Leaders will also need to learn to build accountability."},
+ {id:"uneasy",g:"chro",title:"Employees are uneasy about what’s changing",chro:"People lack clarity on what the changes will mean for them.",link:"The employee-sentiment signal. Jamie tends to have a pulse on exactly this."},
+ {id:"culture",g:"chro",title:"A strong culture, but not yet a customer-facing one",chro:"Great place to work, yet customers are switching.",link:"The pyramid’s point: culture and strategy have to point the same way. A strong culture alone doesn’t."}
+];
+var GROUPS=[
+ {g:"shared",title:"Both executives raised it",sub:"Where the views connect. The “link” line says how they differ."},
+ {g:"cro",title:"Only the CRO raised it",sub:"His revenue and market lens."},
+ {g:"chro",title:"Only the CHRO raised it",sub:"Her people and change lens."}
+];
+var GAPS=[
+ {t:"Incentives and compensation",d:"Does pay reward closing deals or customer outcomes? A classic top-to-bottom misalignment, and a hypothesis here. Nothing in the notes says."},
+ {t:"The rest of the org’s voice",d:"Product, support, marketing, sales and the future Customer Success lead haven’t been heard."},
+ {t:"Direct customer voice",d:"Everything about customers is second-hand through the executives."},
+ {t:"What “customer-centric” looks like day to day",d:"Nobody has described the behaviors by function."},
+ {t:"The Customer Success team’s own design",d:"Charter, size, reporting line, handoff from sales, and which decisions it owns."},
+ {t:"Who owns the transformation",d:"Jamie isn’t leading this phase. The owner and sequence haven’t come up."},
+ {t:"What happened to the original mission",d:"How the “so intuitive customers self-manage” purpose is being retired or reframed."},
+ {t:"What has changed since Phase 1",d:"It has been a few months, so the picture may have moved."}
+];
+
+/* ---------- misalignments ---------- */
+var MIS={
+ M1:{title:"Left to right: the strategy is customer-centric, the mindsets and behaviors aren’t",cells:["strategy","mindset"],note:"This matches the pyramid’s left-to-right example: the new strategy and structure arrive, and the mindset shift gets left for later. The CRO raised it unprompted, and the CHRO confirmed it when asked, adding examples of their own.",ask:"Test with Jamie: where does customer-centric behavior show up today, and which leaders model it?"},
+ M2:{title:"Top to bottom: the direction isn’t backed by metrics, accountability and ways of working",cells:["strategy","org","init"],note:"This matches the pyramid’s top-to-bottom example: asking for a big shift while measures and rewards stay the same. Each function is still scored on its own number.",ask:"Test with Jamie: how are sales, product, marketing and support measured and rewarded today?"},
+ M0:{title:"Watch: the Purpose tier",cells:["values","vision"],note:"There is little direct evidence here. The self-serve mission is being reversed, and nobody has said whether the vision and values have been restated for customer success.",ask:"Test with Jamie: how clear is the new direction to people below the executive team?"}
+};
+
+/* ---------- state ---------- */
+var KEY="uniforce-tags-v1";
+var tags={};
+try{var raw=localStorage.getItem(KEY);if(raw){tags=JSON.parse(raw)||{}}}catch(e){tags={}}
+EV.forEach(function(e){e.def=e.cell;if(tags[e.id]&&CELLS[tags[e.id]]){e.cell=tags[e.id]}});
+function saveTags(){var o={};EV.forEach(function(e){if(e.cell!==e.def)o[e.id]=e.cell});try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+var sel="mindset",misSel=null,srcFilter="all",cellFilter="all";
+
+/* ---------- small helpers ---------- */
+function srcChip(s){return '<span class="src '+s+'">'+SRC[s]+'</span>'}
+function cellChip(c){return '<span class="chip c-'+c+'">'+CELLS[c].label.replace(" (symptoms, not a cell)","")+'</span>'}
+function money(v,d){return "$"+(v/1e6).toFixed(d==null?1:d)+"M"}
+var PV={case:"From Uniforce",calc:"Calculated",est:"Estimate",note:"Interview note",read:"My analysis"};
+function pvChip(k){return '<span class="pv '+k+'">'+PV[k]+'</span>'}
+function kindOf(e){return e.k||((e.src==="cro"||e.src==="chro")?"note":"case")}
+
+/* ---------- charts ---------- */
+function flowChart(){
+  var W=560,H=290,top=34,base=H-44,maxV=260000,bw=62,gap=6,gw=bw*2+gap;
+  var step=(W-gw)/2.0+0, s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Grouped bars of new and churned customers for three years">';
+  s+='<line x1="0" x2="'+W+'" y1="'+base+'" y2="'+base+'" stroke="var(--line)"/>';
+  for(var i=0;i<3;i++){
+    var x0=20+i*((W-40-gw)/2);
+    var hn=FIN.newC[i]/maxV*(base-top),hc=FIN.churned[i]/maxV*(base-top);
+    s+='<rect x="'+x0+'" y="'+(base-hn)+'" width="'+bw+'" height="'+hn+'" rx="4" fill="var(--s-cro)"/>';
+    s+='<rect x="'+(x0+bw+gap)+'" y="'+(base-hc)+'" width="'+bw+'" height="'+hc+'" rx="4" fill="var(--pink)"/>';
+    s+='<text x="'+(x0+bw/2)+'" y="'+(base-hn-6)+'" text-anchor="middle">'+nf.format(FIN.newC[i])+'</text>';
+    s+='<text x="'+(x0+bw+gap+bw/2)+'" y="'+(base-hc-6)+'" text-anchor="middle">'+nf.format(FIN.churned[i])+'</text>';
+    s+='<text x="'+(x0+gw/2)+'" y="'+(base+20)+'" text-anchor="middle" class="lab-strong">'+Y[i]+'</text>';
+  }
+  return s+'</svg>';
+}
+function netChart(){
+  var W=300,H=290,zero=44,maxH=170,maxV=8000,bw=56;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Net change in customers for three years">';
+  s+='<line x1="0" x2="'+W+'" y1="'+zero+'" y2="'+zero+'" stroke="var(--ink)" stroke-width="1.5"/>';
+  s+='<text x="0" y="'+(zero-8)+'">0</text>';
+  for(var i=0;i<3;i++){
+    var net=FIN.newC[i]-FIN.churned[i];var h=Math.abs(net)/maxV*maxH;var x=34+i*84;
+    s+='<rect x="'+x+'" y="'+zero+'" width="'+bw+'" height="'+h+'" rx="4" fill="var(--pink)"/>';
+    s+='<text x="'+(x+bw/2)+'" y="'+(zero+h+16)+'" text-anchor="middle" class="lab-strong">'+(net<0?"−":"+")+nf.format(Math.abs(net))+'</text>';
+    s+='<text x="'+(x+bw/2)+'" y="'+(H-14)+'" text-anchor="middle">'+Y[i]+'</text>';
+  }
+  return s+'</svg>';
+}
+function spark(vals,fmt,labels){
+  var W=260,H=100,pl=26,pr=26,pt=26,pb=24;
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals),pad=(mx-mn)||1,lo=mn-pad*0.5,hi=mx+pad*0.5;
+  var pts=vals.map(function(v,i){return [pl+i*(W-pl-pr)/(vals.length-1),pt+(1-(v-lo)/(hi-lo))*(H-pt-pb)]});
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Three-year trend">';
+  s+='<polyline points="'+pts.map(function(p){return p.join(",")}).join(" ")+'" fill="none" stroke="var(--blue)" stroke-width="2.5"/>';
+  pts.forEach(function(p,i){
+    s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.5" fill="'+(i==vals.length-1?"var(--pink)":"var(--blue)")+'"/>';
+    s+='<text x="'+p[0]+'" y="'+(p[1]-10)+'" text-anchor="middle" '+(i==vals.length-1?'class="lab-strong"':'')+'>'+fmt(vals[i])+'</text>';
+    s+='<text x="'+p[0]+'" y="'+(H-6)+'" text-anchor="middle">'+(labels||["Y−2","Y−1","Now"])[i]+'</text>';
+  });
+  return s+'</svg>';
+}
+function minis(){
+  var rv=[FIN.revenue[1]-FIN.revenue[0],FIN.revenue[2]-FIN.revenue[1]],rvT=FIN.revenue[0]-FIN.revenue[2];
+  var defs=[
+    {t:"Retention of existing customers",v:FIN.retention,f:function(x){return x+"%"},n:"Down 3 points in two years.",c:"outcome",calc:true},
+    {t:"Share of new customers in market",v:FIN.share,f:function(x){return x.toFixed(1)+"%"},n:"One point of share lost in a growing market.",c:"outcome",calc:true},
+    {t:"Revenue change per year",v:rv,lab:["Y−1","Now"],f:function(x){return (x<0?"−":"+")+"$"+(Math.abs(x)/1e6).toFixed(2)+"M"},n:"Down "+money(-rv[0],2)+" (−0.4%) in Year −1 and "+money(-rv[1],2)+" (−1.7%) this year: "+money(rvT,2)+" over two years, about "+money(rvT/2,2)+" a year.",c:"outcome",calc:true},
+    {t:"Operating margin",v:FIN.opMargin,f:function(x){return x.toFixed(1)+"%"},n:"Down 1.4 points in two years.",c:"outcome",calc:true},
+    {t:"Sales and marketing spend",v:FIN.sm,f:function(x){return money(x,2)},n:"Up about 9% this year while share fell.",c:"init",calc:true},
+    {t:"Days sales outstanding",v:FIN.dso,f:function(x){return x+"d"},n:"Customers are paying 12 days slower than two years ago.",c:"outcome",calc:true}
+  ];
+  $("#minis").innerHTML=defs.map(function(d){
+    var last=d.v[d.v.length-1];
+    return '<div class="card mini"><div class="t">'+d.t+'</div><div class="val">'+d.f(last)+'</div>'+spark(d.v,d.f,d.lab)+'<div class="zoom">Axis zoomed to the range shown</div><div class="note">'+d.n+'</div><div class="prov">'+pvChip("case")+(d.calc?pvChip("calc"):"")+'</div><div style="margin-top:10px">'+cellChip(d.c)+'</div></div>';
+  }).join("");
+}
+function indexChart(){
+  var mk=FIN.market.map(function(v){return v/FIN.market[0]*100}),un=FIN.newC.map(function(v){return v/FIN.newC[0]*100});
+  var W=520,H=240,pl=40,pr=110,pt=20,pb=34,lo=95,hi=120;
+  function X(i){return pl+i*(W-pl-pr)/2}function Yp(v){return pt+(1-(v-lo)/(hi-lo))*(H-pt-pb)}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Index of market new customers versus Uniforce new customers">';
+  [100,110,120].forEach(function(t){s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Yp(t)+'" y2="'+Yp(t)+'" stroke="var(--line)" '+(t==100?'':'stroke-dasharray="3 4"')+'/><text x="'+(pl-8)+'" y="'+(Yp(t)+4)+'" text-anchor="end">'+t+'</text>'});
+  function line(vals,color,label,bold){
+    s+='<polyline fill="none" stroke="'+color+'" stroke-width="3" points="'+vals.map(function(v,i){return X(i)+","+Yp(v)}).join(" ")+'"/>';
+    vals.forEach(function(v,i){s+='<circle cx="'+X(i)+'" cy="'+Yp(v)+'" r="4.5" fill="'+color+'"/>'});
+    s+='<text x="'+(X(2)+12)+'" y="'+(Yp(vals[2])+4)+'" class="lab-strong">'+Math.round(vals[2])+' '+label+'</text>';
+  }
+  line(mk,"var(--blue)","Market");line(un,"var(--pink)","Uniforce");
+  Y.forEach(function(y,i){s+='<text x="'+X(i)+'" y="'+(H-10)+'" text-anchor="middle">'+y+'</text>'});
+  return s+'</svg>';
+}
+function retention(){
+  var el=$("#ret");
+  function upd(){
+    var p=parseFloat(el.value),cust=p/100*FIN.opening[2],rev=cust*FIN.price;
+    $("#ret-out").textContent=p+" pts";
+    $("#ret-cust").textContent=nf.format(Math.round(cust));
+    $("#ret-rev").textContent=money(rev,1);
+    var inc=FIN.sm[2]-FIN.sm[1];
+    $("#ret-compare").textContent=p>0?"For scale: this year’s increase in sales and marketing spend was about "+money(inc,2)+". "+(rev>inc?"This gain is about "+(rev/inc).toFixed(1)+" times that.":"This gain is smaller than that increase."):"Move the slider to see the value of keeping more customers.";
+  }
+  el.addEventListener("input",upd);upd();
+}
+
+/* ---------- voices ---------- */
+function voices(){
+  var V=[
+   {k:"cro",ini:"JA",name:"John Anderson",role:"Chief Revenue Officer",lens:"Revenue, market position and cross-functional execution",q:"“They can’t be the only ones advocating for customers.”",top:"Declining sales and customers leaving for competitors that offer more post-sales support and newer features.",fix:"Enterprise thinking in every leader, joint decision-making, targeted training, strategic hiring, outside expertise, better tools.",miss:"Leaders’ ability to lead change, incentives, and how Customer Success itself will run."},
+   {k:"chro",ini:"AJ",name:"Amara Johnson",role:"Chief Human Resources Officer",lens:"People, change leadership and accountability",q:"“Just because that’s how we’ve done it, doesn’t mean it’s working.”",top:"Leaders lack change management skills, success metrics are unclear, and employees are uneasy as Customer Success launches.",fix:"Change-management training for leaders, customer-centric training for employees, top-down messaging, aligning department goals.",miss:"Competition and innovation pace, concrete cross-functional workflows, and the Customer Success operating model."}
+  ];
+  $("#voices-grid").innerHTML=V.map(function(v){
+    return '<article class="card voice '+v.k+'"><div class="who"><div class="avatar" aria-hidden="true">'+v.ini+'</div><div><h3>'+v.name+'</h3><div class="role">'+v.role+'</div></div></div><p><b>Lens:</b> '+v.lens+'</p><blockquote>'+v.q+'</blockquote><dl><div><dt>Top concern</dt><dd>'+v.top+'</dd></div><div><dt>What they’d do</dt><dd>'+v.fix+'</dd></div><div><dt>What they didn’t raise '+pvChip("read")+'</dt><dd>'+v.miss+'</dd></div></dl><div class="prov">'+pvChip("note")+'<span>Phase 2 interview notes, paraphrased except the quote</span></div></article>';
+  }).join("");
+}
+
+/* ---------- themes ---------- */
+function evidenceFor(thId){return EV.filter(function(e){return e.th.indexOf(thId)>-1})}
+function themes(){
+  var out="";
+  GROUPS.forEach(function(g){
+    out+='<h3 class="group-title">'+g.title+'</h3><p class="group-sub">'+g.sub+'</p>';
+    THEMES.filter(function(t){return t.g===g.g}).forEach(function(t){
+      var ev=evidenceFor(t.id);
+      var left=t.cro?'<div class="side cro"><span class="tag2">CRO</span>'+t.cro+'</div>':'<div class="side cro none"><span class="tag2">CRO</span>Not raised</div>';
+      var right=t.chro?'<div class="side chro"><span class="tag2">CHRO</span>'+t.chro+'</div>':'<div class="side chro none"><span class="tag2">CHRO</span>Not raised</div>';
+      out+='<details class="theme"><summary>'+left+'<div class="core"><b>'+t.title+'</b><span class="more">'+ev.length+' evidence point'+(ev.length===1?"":"s")+' · open</span></div>'+right+'</summary><div class="tbody"><p class="link">'+t.link+'</p><div class="prov">'+pvChip("read")+'<span>how the two views connect</span></div>'+
+      ev.map(function(e){return '<div class="ev" data-ev="'+e.id+'"><span class="id">'+e.id+'</span><div>'+e.t+'<div class="meta">'+srcChip(e.src)+pvChip(kindOf(e))+'<span class="chip cellchip-slot">'+CELLS[e.cell].label+'</span></div></div></div>'}).join("")+'</div></details>';
+    });
+  });
+  $("#themes").innerHTML=out;
+  $("#gaps").innerHTML=GAPS.map(function(g){return '<div class="gap"><b>'+g.t+'</b>'+g.d+'</div>'}).join("");
+}
+function refreshThemeChips(){
+  $$("#themes .ev").forEach(function(row){
+    var e=EVBY[row.getAttribute("data-ev")];var slot=$(".cellchip-slot",row);
+    slot.className="chip c-"+e.cell+" cellchip-slot";slot.textContent=CELLS[e.cell].label.replace(" (symptoms, not a cell)","");
+  });
+}
+
+/* ---------- pyramid ---------- */
+function counts(){
+  var c={};CELL_ORDER.forEach(function(k){c[k]={n:0,s:{cro:0,chro:0,case:0,fin:0}}});
+  EV.forEach(function(e){c[e.cell].n++;c[e.cell].s[e.src]++});return c;
+}
+function pyramid(){
+  var c=counts(),max=1;CELL_ORDER.forEach(function(k){if(c[k].n>max)max=c[k].n});
+  $$(".cell[data-cell]").forEach(function(b){
+    var k=b.getAttribute("data-cell"),d=c[k];
+    var bar=["cro","chro","case","fin"].map(function(s){return d.s[s]?'<i style="width:'+(d.s[s]/d.n*100)+'%;background:'+(k==="outcome"?SRC_COLOR[s]:"#fff")+';opacity:'+(k==="outcome"?1:({cro:1,chro:.72,case:.5,fin:.3}[s]))+'"></i>':""}).join("");
+    if(k==="outcome"){
+      b.innerHTML='<span class="nm">'+CELLS[k].label+'</span><span class="ct">'+d.n+' evidence point'+(d.n===1?"":"s")+'</span>';
+    }else{
+      b.innerHTML='<span class="nm">'+CELLS[k].label+'</span><span><span class="ct">'+d.n+' evidence point'+(d.n===1?"":"s")+'</span><span class="bar" style="margin-top:6px" aria-hidden="true">'+bar+'</span></span>';
+    }
+    b.classList.toggle("sel",k===sel);
+    var inMis=misSel?MIS[misSel].cells.indexOf(k)>-1:false;
+    b.classList.toggle("hl",inMis);
+    b.classList.toggle("dim",!!misSel&&!inMis&&k!=="outcome");
+    b.setAttribute("aria-pressed",k===sel?"true":"false");
+  });
+  panel();misCard();
+}
+function panel(){
+  var info=CELLINFO[sel],list=EV.filter(function(e){return e.cell===sel});
+  var tier=CELLS[sel].tier+(CELLS[sel].side?" · "+CELLS[sel].side:"");
+  $("#cell-panel").innerHTML='<div class="cap" style="margin:0">'+tier+'</div><h3 class="panel-title">'+CELLS[sel].label+'</h3><span class="status '+info.st+'">My analysis: '+info.status+'</span><p style="margin-bottom:12px">'+info.read+'</p>'+
+   (list.length?list.map(function(e){return '<div class="ev"><span class="id">'+e.id+'</span><div>'+e.t+'<div class="meta">'+srcChip(e.src)+pvChip(kindOf(e))+'</div><div style="color:var(--muted);margin-top:4px"><b>So what (my analysis):</b> '+e.so+'</div></div></div>'}).join(""):'<p style="color:var(--muted)">No evidence tagged here yet.</p>');
+}
+function misCard(){
+  var el=$("#mis-card");
+  if(!misSel){el.innerHTML="";return}
+  var m=MIS[misSel],ev=EV.filter(function(e){return m.cells.indexOf(e.cell)>-1}),srcs={};
+  ev.forEach(function(e){srcs[e.src]=1});
+  el.innerHTML='<div class="mis-card"><h3>'+m.title+'</h3><div class="prov">'+pvChip("read")+'<span>built from the tagged evidence</span></div><p>'+m.note+'</p><div class="tri"><b>'+ev.length+' evidence points from '+Object.keys(srcs).length+' of 4 sources:</b> '+Object.keys(srcs).map(srcChip).join(" ")+'</div><p class="next">'+m.ask+'</p></div>';
+}
+function wirePyramid(){
+  $$(".cell[data-cell]").forEach(function(b){b.addEventListener("click",function(){sel=b.getAttribute("data-cell");pyramid()})});
+  $$("[data-mis]").forEach(function(b){b.addEventListener("click",function(){
+    var k=b.getAttribute("data-mis");misSel=(misSel===k)?null:k;
+    $$("[data-mis]").forEach(function(x){x.setAttribute("aria-pressed",x.getAttribute("data-mis")===misSel?"true":"false")});
+    pyramid();
+  })});
+}
+
+/* ---------- ledger ---------- */
+function filters(){
+  var h='<span style="font-weight:600;font-size:14px">Source</span>';
+  [["all","All"],["cro","CRO"],["chro","CHRO"],["case","Phase 1 / background"],["fin","Financials"]].forEach(function(p){h+='<button class="btn" data-sf="'+p[0]+'" aria-pressed="'+(srcFilter===p[0])+'">'+p[1]+'</button>'});
+  h+='<label for="cf" style="font-weight:600;font-size:14px;margin-left:10px">Cell</label><select id="cf"><option value="all">All cells</option>'+CELL_ORDER.map(function(k){return '<option value="'+k+'">'+CELLS[k].label+'</option>'}).join("")+'</select><button class="btn" id="reset">Reset tags</button>';
+  $("#filters").innerHTML=h;
+  $$("[data-sf]").forEach(function(b){b.addEventListener("click",function(){srcFilter=b.getAttribute("data-sf");filters();ledger()})});
+  $("#cf").value=cellFilter;
+  $("#cf").addEventListener("change",function(e){cellFilter=e.target.value;ledger()});
+  $("#reset").addEventListener("click",function(){EV.forEach(function(e){e.cell=e.def});saveTags();ledger();pyramid();refreshThemeChips()});
+}
+function ledger(){
+  var rows=EV.filter(function(e){return (srcFilter==="all"||e.src===srcFilter)&&(cellFilter==="all"||e.cell===cellFilter)});
+  var h='<div class="row head"><div>ID</div><div>Source</div><div>Evidence</div><div>Pyramid cell</div><div>So what (my analysis)</div></div>';
+  h+=rows.map(function(e){
+    return '<div class="row"><div><b>'+e.id+'</b></div><div>'+srcChip(e.src)+'</div><div>'+e.t+'<div class="prov">'+pvChip(kindOf(e))+'</div></div><div><select aria-label="Pyramid cell for '+e.id+'" data-tag="'+e.id+'">'+CELL_ORDER.map(function(k){return '<option value="'+k+'"'+(k===e.cell?" selected":"")+'>'+CELLS[k].label.replace(" (symptoms, not a cell)"," (symptom)")+'</option>'}).join("")+'</select>'+(e.cell!==e.def?'<div style="font-size:12px;color:var(--ink);font-weight:500;margin-top:4px">Retagged by you</div>':'')+'</div><div class="sowhat">'+e.so+'</div></div>';
+  }).join("")||'<p style="color:var(--muted)">Nothing matches these filters.</p>';
+  $("#ledger-rows").innerHTML=h;
+  $$("[data-tag]").forEach(function(s){s.addEventListener("change",function(){
+    var e=EVBY[s.getAttribute("data-tag")];e.cell=s.value;saveTags();pyramid();refreshThemeChips();
+    var note=s.parentNode.querySelector("div");if(e.cell!==e.def){if(!note)s.insertAdjacentHTML("afterend",'<div style="font-size:12px;color:var(--ink);font-weight:500;margin-top:4px">Retagged by you</div>')}else if(note){note.remove()}
+  })});
+}
+
+/* ---------- questions ---------- */
+function asks(){
+  var A=[
+   {q:"What has changed since Phase 1, and how did the Customer Success announcement land with employees?",c:["mindset","outcome"]},
+   {q:"Where do you see customer-centric behavior today, and which leaders model it?",c:["mindset"]},
+   {q:"How are sales, product, marketing and support measured and rewarded today? Has anything changed since the announcement?",c:["org"]},
+   {q:"How will Customer Success work with sales, product and marketing? Who owns which decisions?",c:["init","strategy"]},
+   {q:"How clear is the new direction to people below the executive team, and what happened to the “intuitive, self-serve” mission?",c:["vision","values"]},
+   {q:"When leaders say sales are declining, is it mainly customers leaving, fewer deals won, or both?",c:["outcome"]}
+  ];
+  $("#asks").innerHTML=A.map(function(a){return '<div class="ask"><div class="chips">'+a.c.map(cellChip).join("")+'</div><div>'+a.q+'</div></div>'}).join("");
+}
+
+/* ---------- init ---------- */
+$("#chart-flow").innerHTML=flowChart();
+$("#chart-net").innerHTML=netChart();
+$("#chart-index").innerHTML=indexChart();
+minis();retention();voices();themes();refreshThemeChips();wirePyramid();pyramid();filters();ledger();asks();
+function fillCounts(){
+  $$("[data-mis-count]").forEach(function(el){
+    var m=MIS[el.getAttribute("data-mis-count")],ev=EV.filter(function(e){return m.cells.indexOf(e.cell)>-1}),srcs={};
+    ev.forEach(function(e){srcs[e.src]=1});
+    el.textContent=ev.length+" evidence points from "+Object.keys(srcs).length+" of 4 sources";
+  });
+  $$("[data-ev-total]").forEach(function(el){el.textContent=EV.length});
+}
+function setView(v){
+  document.body.setAttribute("data-view",v);
+  $$(".viewswitch button").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-view")===v?"true":"false")});
+  try{sessionStorage.setItem("uniforce-view",v)}catch(e){}
+  fillCounts();
+}
+$$(".viewswitch button").forEach(function(b){b.addEventListener("click",function(){setView(b.getAttribute("data-view"))})});
+$$("[data-view-link]").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();setView(a.getAttribute("data-view-link"));window.scrollTo(0,0)})});
+$$("[data-qa-all]").forEach(function(b){b.addEventListener("click",function(){var o=b.getAttribute("data-qa-all")==="open";$$("details.qa").forEach(function(d){d.open=o})})});
+var v0="summary";try{v0=sessionStorage.getItem("uniforce-view")||"summary"}catch(e){}
+setView((v0==="analysis"||v0==="qa")?v0:"summary");
+var tabs=$$(".tabs a:not([data-view-link])"),ids=tabs.map(function(a){return a.getAttribute("href").slice(1)});
+function setTab(id){tabs.forEach(function(a){a.setAttribute("aria-current",a.getAttribute("href")==="#"+id?"true":"false")})}
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)setTab(e.target.id)})},{rootMargin:"-30% 0px -60% 0px"});
+  ids.forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el)});
+}
+})();
+</script>
+</body>
+</html>
